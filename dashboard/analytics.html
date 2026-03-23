@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>her, becoming — Website Analytics</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@400;500;600&family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+:root{--sand:#E8DDD3;--warm-cream:#F5F0EB;--deep-earth:#3D2E1F;--terracotta:#C4775B;--sage:#8B9E7E;--dusty-rose:#C9A1A0;--charcoal:#2B2B2B;--stone:#A69889;--light-sage:#D4DFCD;--warm-white:#FDFBF8;--gold:#B8963E;--blush:#E8C8C0;--bg-primary:var(--warm-white);--bg-secondary:var(--warm-cream);--text-primary:var(--deep-earth);--text-secondary:var(--stone);--text-accent:var(--terracotta);--border:var(--sand);--border-subtle:rgba(232,221,211,0.5);--glow:rgba(139,158,126,0.15)}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'DM Sans',sans-serif;background:linear-gradient(165deg,var(--warm-white) 0%,rgba(232,221,211,0.25) 40%,var(--warm-cream) 100%);min-height:100vh;color:var(--text-primary)}
+
+/* Nav */
+.nav{position:fixed;left:0;top:0;width:62px;height:100vh;background:var(--warm-white);border-right:1px solid var(--border-subtle);display:flex;flex-direction:column;align-items:center;padding:20px 0;z-index:100}
+.nav-brand{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:500;margin-bottom:32px;writing-mode:vertical-rl;transform:rotate(180deg);letter-spacing:2px;color:var(--text-primary)}
+.nav-link{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:12px;margin-bottom:8px;color:var(--stone);text-decoration:none;font-size:18px;transition:all .3s ease}
+.nav-link:hover{background:rgba(139,158,126,0.1);color:var(--text-primary)}
+.nav-link.active{background:rgba(139,158,126,0.15);color:var(--sage);position:relative}
+.nav-link.active::before{content:'';position:absolute;left:-10px;width:3px;height:20px;background:var(--sage);border-radius:0 3px 3px 0}
+.nav-bottom{margin-top:auto}
+.nav-bottom a{width:42px;height:42px;display:flex;align-items:center;justify-content:center;border-radius:12px;color:var(--stone);text-decoration:none;font-size:14px;transition:all .3s}
+.nav-bottom a:hover{color:var(--terracotta)}
+
+/* Main */
+.main{margin-left:62px;padding:32px 40px}
+.page-header{margin-bottom:32px}
+.page-header h1{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:500;margin-bottom:4px}
+.page-header h1 em{font-style:italic;font-weight:400}
+.page-header p{color:var(--stone);font-size:14px}
+
+/* Cards */
+.card{background:var(--warm-white);border:1px solid var(--border-subtle);border-radius:20px;padding:28px;margin-bottom:20px;transition:all .3s ease}
+.card:hover{box-shadow:0 4px 24px var(--glow)}
+.card h3{font-family:'Playfair Display',serif;font-size:18px;margin-bottom:16px;color:var(--text-primary)}
+.card p{color:var(--text-secondary);font-size:14px;line-height:1.6;margin-bottom:12px}
+
+/* Analytics Grid */
+.analytics-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:28px}
+.stat-card{background:var(--warm-white);border:1px solid var(--border-subtle);border-radius:20px;padding:24px;text-align:center;transition:all .3s ease}
+.stat-card:hover{box-shadow:0 4px 24px var(--glow);transform:translateY(-2px)}
+.stat-card .stat-icon{font-size:28px;margin-bottom:12px}
+.stat-card .stat-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--stone);margin-bottom:8px}
+.stat-card .stat-value{font-family:'DM Sans',monospace;font-size:28px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--text-primary)}
+.stat-card .stat-change{font-size:12px;margin-top:6px;color:var(--sage)}
+
+/* GA Embed */
+.ga-frame{width:100%;height:600px;border:none;border-radius:16px;background:var(--warm-cream)}
+.ga-link{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:var(--deep-earth);color:var(--warm-white);border-radius:100px;text-decoration:none;font-size:14px;font-weight:600;transition:all .3s}
+.ga-link:hover{background:var(--terracotta)}
+
+/* Status */
+.status-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 14px;border-radius:100px;font-size:12px;font-weight:500}
+.status-live{background:rgba(139,158,126,0.15);color:var(--sage)}
+.status-dot{width:6px;height:6px;border-radius:50%;background:var(--sage);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* Quick Stats */
+.quick-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;margin-bottom:20px}
+.quick-stat{padding:16px;background:rgba(139,158,126,0.06);border-radius:14px}
+.quick-stat-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--stone);margin-bottom:4px}
+.quick-stat-value{font-family:'DM Sans',monospace;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.fade-up{animation:fadeUp .5s ease forwards;opacity:0}
+.delay-1{animation-delay:.1s}
+.delay-2{animation-delay:.2s}
+.delay-3{animation-delay:.3s}
+.delay-4{animation-delay:.4s}
+
+/* Responsive */
+@media(max-width:900px){.analytics-grid{grid-template-columns:1fr}.main{padding:20px}}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="nav">
+<div class="nav-brand">hb</div>
+<a href="/dashboard" class="nav-link" title="Overview">◈</a>
+<a href="/dashboard/content" class="nav-link" title="Content">◫</a>
+<a href="/dashboard/funnel" class="nav-link" title="Funnel">▽</a>
+<a href="/dashboard/performance" class="nav-link" title="Performance">◉</a>
+<a href="/dashboard/clients" class="nav-link" title="Clients">♡</a>
+<a href="/dashboard/research" class="nav-link" title="Research">✦</a>
+<a href="/dashboard/analytics" class="nav-link active" title="Website Analytics">📊</a>
+<div class="nav-bottom"><a href="/logout" title="Sign Out">↗</a></div>
+</nav>
+
+<!-- Main Content -->
+<div class="main">
+
+<div class="page-header fade-up">
+<h1><em>her,</em> becoming — Website Analytics</h1>
+<p>chrystelclear.co visitor data powered by Google Analytics</p>
+</div>
+
+<!-- Status -->
+<div class="card fade-up delay-1" style="border-top:3px solid var(--sage)">
+<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px">
+<div>
+<h3 style="margin-bottom:4px">Google Analytics Connected</h3>
+<p style="margin:0">Measurement ID: <strong>G-3H20EX41ZL</strong> · Tracking chrystelclear-production.up.railway.app</p>
+</div>
+<div style="display:flex;gap:12px;align-items:center">
+<span class="status-badge status-live"><span class="status-dot"></span> LIVE</span>
+<a href="https://analytics.google.com/analytics/web/#/p/G-3H20EX41ZL" target="_blank" class="ga-link">Open Full Analytics ↗</a>
+</div>
+</div>
+</div>
+
+<!-- Real-time Stats (placeholder - updates when GA has data) -->
+<div class="analytics-grid fade-up delay-2">
+<div class="stat-card">
+<div class="stat-icon">👁</div>
+<div class="stat-label">Page Views (Today)</div>
+<div class="stat-value" id="pageviews">—</div>
+<div class="stat-change">Tracking started</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">👤</div>
+<div class="stat-label">Visitors (Today)</div>
+<div class="stat-value" id="visitors">—</div>
+<div class="stat-change">Data collecting</div>
+</div>
+<div class="stat-card">
+<div class="stat-icon">⏱</div>
+<div class="stat-label">Avg. Session</div>
+<div class="stat-value" id="session">—</div>
+<div class="stat-change">Needs 24-48hrs</div>
+</div>
+</div>
+
+<!-- Key Pages -->
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:20px" class="fade-up delay-3">
+
+<div class="card">
+<h3>What's Being Tracked</h3>
+<div class="quick-stats">
+<div class="quick-stat">
+<div class="quick-stat-label">Page Views</div>
+<div class="quick-stat-value">✓</div>
+</div>
+<div class="quick-stat">
+<div class="quick-stat-label">Scroll Depth</div>
+<div class="quick-stat-value">✓</div>
+</div>
+<div class="quick-stat">
+<div class="quick-stat-label">Outbound Clicks</div>
+<div class="quick-stat-value">✓</div>
+</div>
+<div class="quick-stat">
+<div class="quick-stat-label">Traffic Sources</div>
+<div class="quick-stat-value">✓</div>
+</div>
+</div>
+<p>Enhanced measurement is on. Google tracks page views, scrolls, outbound clicks, site search, video engagement, and file downloads automatically.</p>
+</div>
+
+<div class="card">
+<h3>Key Metrics to Watch</h3>
+<p><strong style="color:var(--terracotta)">Traffic Sources</strong> — Where visitors come from (Instagram, TikTok, direct, Google)</p>
+<p><strong style="color:var(--sage)">Book a Call Clicks</strong> — How many click through to book (once Calendly is connected)</p>
+<p><strong style="color:var(--gold)">Scroll Depth</strong> — Do visitors read past the hero? Do they reach the pricing section?</p>
+<p><strong style="color:var(--dusty-rose)">Bounce Rate</strong> — How many leave without engaging</p>
+</div>
+
+</div>
+
+<!-- How to View Full Data -->
+<div class="card fade-up delay-4" style="margin-top:20px">
+<h3>Viewing Your Data</h3>
+<p>Full analytics are in Google Analytics. Log in as <strong>chrystelclear.co@gmail.com</strong> at the link below. Give it 24-48 hours after launch to start seeing meaningful data.</p>
+<div style="margin-top:16px">
+<a href="https://analytics.google.com" target="_blank" class="ga-link">Open Google Analytics Dashboard ↗</a>
+</div>
+</div>
+
+</div>
+
+</body>
+</html>

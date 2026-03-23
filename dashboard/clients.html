@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>her, becoming — Clients</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sand: #E8DDD3;
+      --warm-cream: #F5F0EB;
+      --deep-earth: #3D2E1F;
+      --terracotta: #C4775B;
+      --sage: #8B9E7E;
+      --dusty-rose: #C9A1A0;
+      --charcoal: #2B2B2B;
+      --stone: #A69889;
+      --light-sage: #D4DFCD;
+      --warm-white: #FDFBF8;
+      --gold: #B8963E;
+      --blush: #E8C8C0;
+      --bg-primary: var(--warm-white);
+      --bg-secondary: var(--warm-cream);
+      --bg-card: var(--warm-white);
+      --text-primary: var(--deep-earth);
+      --text-secondary: var(--stone);
+      --text-accent: var(--terracotta);
+      --border: var(--sand);
+      --border-subtle: rgba(232, 221, 211, 0.5);
+      --glow: rgba(139, 158, 126, 0.15);
+      --success: var(--sage);
+      --warning: var(--gold);
+      --attention: var(--terracotta);
+      --highlight: var(--dusty-rose);
+    }
+
+    body {
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      color: var(--text-primary);
+      background: linear-gradient(165deg, var(--warm-white) 0%, rgba(232,221,211,0.25) 40%, var(--warm-cream) 100%);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; top: -20%; right: -10%; width: 60%; height: 60%;
+      background: radial-gradient(ellipse, rgba(139,158,126,0.06) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; bottom: -15%; left: -5%; width: 50%; height: 50%;
+      background: radial-gradient(ellipse, rgba(201,161,160,0.05) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .sidebar-nav {
+      position: fixed; left: 0; top: 0; width: 62px; height: 100vh;
+      background: var(--warm-white); border-right: 1px solid var(--border-subtle);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 20px 0; z-index: 100;
+    }
+
+    .sidebar-logo {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-size: 18px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 32px;
+      letter-spacing: -0.02em; line-height: 1;
+    }
+
+    .sidebar-nav nav { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+    .nav-item {
+      width: 42px; height: 42px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px; font-size: 16px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: all 0.3s ease; position: relative; cursor: pointer;
+    }
+
+    .nav-item:hover { color: var(--text-primary); background: rgba(139,158,126,0.08); }
+    .nav-item.active { color: var(--sage); background: rgba(139,158,126,0.12); }
+
+    .nav-item.active::before {
+      content: ''; position: absolute; left: -10px; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background: var(--sage); border-radius: 0 3px 3px 0;
+    }
+
+    .nav-tooltip {
+      position: absolute; left: 52px;
+      background: var(--deep-earth); color: var(--warm-white);
+      font-size: 12px; font-weight: 500; padding: 5px 10px;
+      border-radius: 6px; white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 200;
+    }
+
+    .nav-item:hover .nav-tooltip { opacity: 1; }
+
+    .main-wrapper {
+      margin-left: 62px; flex: 1; display: flex;
+      min-height: 100vh; position: relative; z-index: 1;
+    }
+
+    .main-content { flex: 1; padding: 28px 32px; overflow-y: auto; }
+
+    .page-header { margin-bottom: 28px; }
+
+    .page-header h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px; font-weight: 400;
+      color: var(--text-primary); letter-spacing: -0.01em;
+    }
+
+    .page-header h1 em { font-style: italic; font-weight: 500; }
+    .page-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+    .section-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 15px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 16px; letter-spacing: 0.01em;
+    }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    }
+
+    .badge-on-track { background: rgba(212,223,205,0.5); color: var(--sage); }
+    .badge-needs-attention { background: rgba(232,200,192,0.5); color: var(--terracotta); }
+    .badge-ahead { background: rgba(184,150,62,0.15); color: var(--gold); }
+    .badge-completed { background: rgba(61,46,31,0.1); color: var(--deep-earth); }
+
+    /* ── Week/Pillar Overview ── */
+    .week-overview-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .week-overview-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 16px 14px;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .week-overview-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 24px var(--glow);
+    }
+
+    .week-overview-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    }
+
+    .week-1::before { background: var(--stone); }
+    .week-2::before { background: var(--dusty-rose); }
+    .week-3::before { background: var(--sage); }
+    .week-4::before { background: var(--terracotta); }
+    .week-5::before { background: var(--gold); }
+    .week-6::before { background: var(--deep-earth); }
+
+    .week-num {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-secondary); margin-bottom: 4px;
+    }
+
+    .week-pillar {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 15px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 6px; line-height: 1.2;
+    }
+
+    .week-theme {
+      font-size: 10px; font-style: italic;
+      color: var(--text-secondary); margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .week-count {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 24px; font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .week-count-label {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Client Cards ── */
+    .client-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .client-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 22px 24px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .client-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 24px var(--glow);
+    }
+
+    .client-card::before {
+      content: '';
+      position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+    }
+
+    .client-week-1::before { background: var(--stone); }
+    .client-week-2::before { background: var(--dusty-rose); }
+    .client-week-3::before { background: var(--sage); }
+    .client-week-4::before { background: var(--terracotta); }
+    .client-week-5::before { background: var(--gold); }
+    .client-week-6::before { background: var(--deep-earth); }
+
+    .client-header {
+      display: flex; justify-content: space-between; align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .client-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 20px; font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .client-week-label {
+      font-size: 12px; color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .client-pillar {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 13px; font-weight: 500;
+      color: var(--text-accent);
+    }
+
+    /* ── Progress Bar ── */
+    .progress-section {
+      margin-bottom: 14px;
+    }
+
+    .progress-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 6px;
+    }
+
+    .progress-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary);
+    }
+
+    .progress-value {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 12px; font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .progress-track {
+      height: 6px;
+      background: rgba(232,221,211,0.5);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      border-radius: 6px;
+      background: var(--sage);
+      transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* ── Session Tracker ── */
+    .session-tracker {
+      margin-bottom: 14px;
+    }
+
+    .session-tracker-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary); margin-bottom: 8px;
+    }
+
+    .session-phases {
+      display: flex; gap: 6px;
+    }
+
+    .session-phase {
+      flex: 1;
+      text-align: center;
+      padding: 8px 4px;
+      border-radius: 10px;
+      font-size: 10.5px;
+      font-weight: 600;
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      transition: all 0.3s ease;
+    }
+
+    .session-phase.completed {
+      background: rgba(139,158,126,0.12);
+      color: var(--sage);
+      border-color: rgba(139,158,126,0.2);
+    }
+
+    .session-phase.current {
+      background: rgba(196,119,91,0.1);
+      color: var(--terracotta);
+      border-color: rgba(196,119,91,0.25);
+    }
+
+    .session-phase-time {
+      font-size: 9px; font-weight: 400;
+      margin-top: 2px;
+      color: inherit;
+      opacity: 0.7;
+    }
+
+    /* ── Homework & Next Session ── */
+    .client-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .homework-status {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px;
+    }
+
+    .homework-icon {
+      width: 18px; height: 18px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px;
+    }
+
+    .homework-icon.done {
+      background: rgba(139,158,126,0.15);
+      color: var(--sage);
+    }
+
+    .homework-icon.pending {
+      background: rgba(184,150,62,0.15);
+      color: var(--gold);
+    }
+
+    .homework-icon.overdue {
+      background: rgba(196,119,91,0.15);
+      color: var(--terracotta);
+    }
+
+    .next-session {
+      font-size: 12px; color: var(--text-secondary);
+    }
+
+    .next-session strong {
+      color: var(--text-primary);
+    }
+
+    /* ── Summary Stats ── */
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+
+    .summary-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 18px 20px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .summary-card:hover { transform: translateY(-2px); box-shadow: 0 4px 24px var(--glow); }
+
+    .summary-value {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 28px; font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .summary-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary); margin-top: 4px;
+    }
+
+    /* ── Client Task Checklist ── */
+    .client-tasks {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .client-tasks-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .task-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 0;
+    }
+
+    .task-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 16px;
+      height: 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 4px;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .task-item input[type="checkbox"]:checked {
+      background: var(--sage);
+      border-color: var(--sage);
+    }
+
+    .task-item input[type="checkbox"]:checked::after {
+      content: '✓';
+      position: absolute;
+      top: -1px;
+      left: 2px;
+      font-size: 11px;
+      color: var(--warm-white);
+      font-weight: 700;
+    }
+
+    .task-item label {
+      font-size: 12px;
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .task-item input[type="checkbox"]:checked + label {
+      color: var(--text-secondary);
+      text-decoration: line-through;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--stone); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar-nav">
+    <div class="sidebar-logo">h</div>
+    <nav>
+      <a href="dashboard.html" class="nav-item" title="Overview">◈<span class="nav-tooltip">Overview</span></a>
+      <a href="content.html" class="nav-item" title="Content">◫<span class="nav-tooltip">Content</span></a>
+      <a href="funnel.html" class="nav-item" title="Funnel">▽<span class="nav-tooltip">Funnel</span></a>
+      <a href="performance.html" class="nav-item" title="Performance">◉<span class="nav-tooltip">Performance</span></a>
+      <a href="clients.html" class="nav-item active" title="Clients">♡<span class="nav-tooltip">Clients</span></a>
+      <a href="research.html" class="nav-item" title="Research">✦<span class="nav-tooltip">Research</span></a>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    <main class="main-content">
+
+      <div class="page-header fade-up" style="animation-delay: 0s;">
+        <h1><em>her, becoming</em> — Coaching Clients</h1>
+        <p>The Her Becoming 1-1 Experience &middot; Head to Toe Method &middot; 0 active clients &middot; 2 completed</p>
+      </div>
+
+      <!-- Summary Stats -->
+      <div class="summary-row fade-up" style="animation-delay: 0.1s;">
+        <div class="summary-card">
+          <div class="summary-value">0</div>
+          <div class="summary-label">Active Clients</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-value">2</div>
+          <div class="summary-label">Programs Completed</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-value">$994</div>
+          <div class="summary-label">Revenue (Coaching)</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-value">12</div>
+          <div class="summary-label">Sessions Delivered</div>
+        </div>
+      </div>
+
+      <!-- Week/Pillar Overview -->
+      <div class="section-title fade-up" style="animation-delay: 0.15s;">Head to Toe Method — Week Overview</div>
+      <div class="week-overview-grid fade-up" style="animation-delay: 0.2s;">
+        <div class="week-overview-card week-1">
+          <div class="week-num">Week 1</div>
+          <div class="week-pillar">Foundation</div>
+          <div class="week-theme">See clearly. Start honestly.</div>
+          <div class="week-count">0</div>
+          <div class="week-count-label">Clients</div>
+        </div>
+        <div class="week-overview-card week-2">
+          <div class="week-num">Week 2</div>
+          <div class="week-pillar">The Mind</div>
+          <div class="week-theme">You cannot become her while thinking like her.</div>
+          <div class="week-count">0</div>
+          <div class="week-count-label">Clients</div>
+        </div>
+        <div class="week-overview-card week-3">
+          <div class="week-num">Week 3</div>
+          <div class="week-pillar">The Body</div>
+          <div class="week-theme">Your body is your foundation.</div>
+          <div class="week-count">0</div>
+          <div class="week-count-label">Clients</div>
+        </div>
+        <div class="week-overview-card week-4">
+          <div class="week-num">Week 4</div>
+          <div class="week-pillar">The Systems</div>
+          <div class="week-theme">You fall to your systems.</div>
+          <div class="week-count">0</div>
+          <div class="week-count-label">Clients</div>
+        </div>
+        <div class="week-overview-card week-5">
+          <div class="week-num">Week 5</div>
+          <div class="week-pillar">The Image</div>
+          <div class="week-theme">Dress for who you're becoming.</div>
+          <div class="week-count">0</div>
+          <div class="week-count-label">Clients</div>
+        </div>
+        <div class="week-overview-card week-6">
+          <div class="week-num">Week 6</div>
+          <div class="week-pillar">The Care</div>
+          <div class="week-theme">She who honors herself leads the way.</div>
+          <div class="week-count">0</div>
+          <div class="week-count-label">Clients</div>
+        </div>
+      </div>
+
+      <!-- Active Clients -->
+      <div class="section-title fade-up" style="animation-delay: 0.3s;">Active Clients</div>
+      <div class="fade-up" style="animation-delay: 0.35s; text-align: center; padding: 48px 24px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 20px; margin-bottom: 28px;">
+        <div style="font-size: 32px; margin-bottom: 12px; opacity: 0.3;">♡</div>
+        <div style="font-family: 'Cormorant Garamond', Georgia, serif; font-size: 20px; font-weight: 500; color: var(--text-primary); margin-bottom: 6px;">No active clients</div>
+        <div style="font-size: 13px; color: var(--text-secondary); font-style: italic;">Ready for the next woman to begin her becoming</div>
+      </div>
+
+      <!-- Completed Clients -->
+      <div class="section-title fade-up" style="animation-delay: 0.4s;">Completed Programs</div>
+      <div class="client-grid">
+
+        <!-- Grace Lamoureux — Completed -->
+        <div class="client-card client-week-6 fade-up" style="animation-delay: 0.45s;">
+          <div class="client-header">
+            <div>
+              <div class="client-name">Grace Lamoureux</div>
+              <div class="client-week-label">6 of 6 weeks complete &middot; Founding Client</div>
+            </div>
+            <div style="text-align: right;">
+              <span class="badge badge-completed">Completed</span>
+              <div style="margin-top: 6px; color: var(--gold); font-size: 13px; letter-spacing: 1px;">★★★★★</div>
+            </div>
+          </div>
+          <div class="progress-section">
+            <div class="progress-header">
+              <span class="progress-label">Program Progress</span>
+              <span class="progress-value">6 / 6 sessions</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 0%;" data-width="100"></div>
+            </div>
+          </div>
+          <div class="session-tracker">
+            <div class="session-tracker-label">All Sessions Completed</div>
+            <div class="session-phases">
+              <div class="session-phase completed">Open<div class="session-phase-time">10 min</div></div>
+              <div class="session-phase completed">Explore<div class="session-phase-time">20 min</div></div>
+              <div class="session-phase completed">Shift<div class="session-phase-time">20 min</div></div>
+              <div class="session-phase completed">Commit<div class="session-phase-time">10 min</div></div>
+            </div>
+          </div>
+          <div class="client-footer">
+            <div class="homework-status">
+              <div class="homework-icon done">✓</div>
+              <span>Her Becoming Blueprint delivered &middot; 5-star review</span>
+            </div>
+            <div class="next-session"><strong>Program Complete</strong></div>
+          </div>
+          <div class="client-tasks">
+            <div class="client-tasks-label">Follow-Up Tasks</div>
+            <div class="task-item"><input type="checkbox" id="task-grace-checkin" data-task="grace-checkin" onchange="saveClientTasks()"><label for="task-grace-checkin">Send 30-day check-in message</label></div>
+            <div class="task-item"><input type="checkbox" id="task-grace-testimonial" data-task="grace-testimonial" onchange="saveClientTasks()"><label for="task-grace-testimonial">Request testimonial for Instagram</label></div>
+            <div class="task-item"><input type="checkbox" id="task-grace-referral" data-task="grace-referral" onchange="saveClientTasks()"><label for="task-grace-referral">Send referral invitation</label></div>
+            <div class="task-item"><input type="checkbox" id="task-grace-archive" data-task="grace-archive" onchange="saveClientTasks()"><label for="task-grace-archive">Archive client files</label></div>
+          </div>
+        </div>
+
+        <!-- Client #2 — Completed (name unknown) -->
+        <div class="client-card client-week-6 fade-up" style="animation-delay: 0.5s;">
+          <div class="client-header">
+            <div>
+              <div class="client-name">Client #2</div>
+              <div class="client-week-label">6 of 6 weeks complete &middot; Founding Client</div>
+            </div>
+            <div style="text-align: right;">
+              <span class="badge badge-completed">Completed</span>
+              <div style="margin-top: 6px; color: var(--gold); font-size: 13px; letter-spacing: 1px;">★★★★★</div>
+            </div>
+          </div>
+          <div class="progress-section">
+            <div class="progress-header">
+              <span class="progress-label">Program Progress</span>
+              <span class="progress-value">6 / 6 sessions</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" style="width: 0%;" data-width="100"></div>
+            </div>
+          </div>
+          <div class="session-tracker">
+            <div class="session-tracker-label">All Sessions Completed</div>
+            <div class="session-phases">
+              <div class="session-phase completed">Open<div class="session-phase-time">10 min</div></div>
+              <div class="session-phase completed">Explore<div class="session-phase-time">20 min</div></div>
+              <div class="session-phase completed">Shift<div class="session-phase-time">20 min</div></div>
+              <div class="session-phase completed">Commit<div class="session-phase-time">10 min</div></div>
+            </div>
+          </div>
+          <div class="client-footer">
+            <div class="homework-status">
+              <div class="homework-icon done">✓</div>
+              <span>Her Becoming Blueprint delivered &middot; 5-star review</span>
+            </div>
+            <div class="next-session"><strong>Program Complete</strong></div>
+          </div>
+          <div class="client-tasks">
+            <div class="client-tasks-label">Follow-Up Tasks</div>
+            <div class="task-item"><input type="checkbox" id="task-c2-checkin" data-task="c2-checkin" onchange="saveClientTasks()"><label for="task-c2-checkin">Send 30-day check-in message</label></div>
+            <div class="task-item"><input type="checkbox" id="task-c2-testimonial" data-task="c2-testimonial" onchange="saveClientTasks()"><label for="task-c2-testimonial">Request testimonial for Instagram</label></div>
+            <div class="task-item"><input type="checkbox" id="task-c2-referral" data-task="c2-referral" onchange="saveClientTasks()"><label for="task-c2-referral">Send referral invitation</label></div>
+            <div class="task-item"><input type="checkbox" id="task-c2-archive" data-task="c2-archive" onchange="saveClientTasks()"><label for="task-c2-archive">Archive client files</label></div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ── Animate Progress Bars ──
+    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        document.querySelectorAll('.progress-fill[data-width]').forEach(bar => {
+          bar.style.width = bar.dataset.width + '%';
+        });
+      }, 500);
+
+      restoreClientTasks();
+    });
+
+    // ── Client Task Persistence ──
+    function saveClientTasks() {
+      const tasks = {};
+      document.querySelectorAll('.task-item input[type="checkbox"]').forEach(cb => {
+        tasks[cb.dataset.task] = cb.checked;
+      });
+      localStorage.setItem('hb_client_tasks', JSON.stringify(tasks));
+    }
+
+    function restoreClientTasks() {
+      const saved = localStorage.getItem('hb_client_tasks');
+      if (!saved) return;
+      try {
+        const tasks = JSON.parse(saved);
+        Object.entries(tasks).forEach(([key, checked]) => {
+          const cb = document.querySelector(`input[data-task="${key}"]`);
+          if (cb) cb.checked = checked;
+        });
+      } catch (e) {
+        console.error('Failed to restore client tasks:', e);
+      }
+    }
+  </script>
+</body>
+</html>

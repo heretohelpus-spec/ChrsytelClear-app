@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>her, becoming — Research</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sand: #E8DDD3;
+      --warm-cream: #F5F0EB;
+      --deep-earth: #3D2E1F;
+      --terracotta: #C4775B;
+      --sage: #8B9E7E;
+      --dusty-rose: #C9A1A0;
+      --charcoal: #2B2B2B;
+      --stone: #A69889;
+      --light-sage: #D4DFCD;
+      --warm-white: #FDFBF8;
+      --gold: #B8963E;
+      --blush: #E8C8C0;
+      --bg-primary: var(--warm-white);
+      --bg-secondary: var(--warm-cream);
+      --bg-card: var(--warm-white);
+      --text-primary: var(--deep-earth);
+      --text-secondary: var(--stone);
+      --text-accent: var(--terracotta);
+      --border: var(--sand);
+      --border-subtle: rgba(232, 221, 211, 0.5);
+      --glow: rgba(139, 158, 126, 0.15);
+      --success: var(--sage);
+      --warning: var(--gold);
+      --attention: var(--terracotta);
+      --highlight: var(--dusty-rose);
+    }
+
+    body {
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      color: var(--text-primary);
+      background: linear-gradient(165deg, var(--warm-white) 0%, rgba(232,221,211,0.25) 40%, var(--warm-cream) 100%);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; top: -20%; right: -10%; width: 60%; height: 60%;
+      background: radial-gradient(ellipse, rgba(139,158,126,0.06) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; bottom: -15%; left: -5%; width: 50%; height: 50%;
+      background: radial-gradient(ellipse, rgba(201,161,160,0.05) 0%, transparent 70%);
+      pointer-events: none; z-index: 0;
+    }
+
+    .sidebar-nav {
+      position: fixed; left: 0; top: 0; width: 62px; height: 100vh;
+      background: var(--warm-white); border-right: 1px solid var(--border-subtle);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 20px 0; z-index: 100;
+    }
+
+    .sidebar-logo {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-size: 18px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 32px;
+      letter-spacing: -0.02em; line-height: 1;
+    }
+
+    .sidebar-nav nav { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+    .nav-item {
+      width: 42px; height: 42px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px; font-size: 16px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: all 0.3s ease; position: relative; cursor: pointer;
+    }
+
+    .nav-item:hover { color: var(--text-primary); background: rgba(139,158,126,0.08); }
+    .nav-item.active { color: var(--sage); background: rgba(139,158,126,0.12); }
+
+    .nav-item.active::before {
+      content: ''; position: absolute; left: -10px; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background: var(--sage); border-radius: 0 3px 3px 0;
+    }
+
+    .nav-tooltip {
+      position: absolute; left: 52px;
+      background: var(--deep-earth); color: var(--warm-white);
+      font-size: 12px; font-weight: 500; padding: 5px 10px;
+      border-radius: 6px; white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 200;
+    }
+
+    .nav-item:hover .nav-tooltip { opacity: 1; }
+
+    .main-wrapper {
+      margin-left: 62px; flex: 1; display: flex;
+      min-height: 100vh; position: relative; z-index: 1;
+    }
+
+    .main-content { flex: 1; padding: 28px 32px; overflow-y: auto; }
+
+    .page-header { margin-bottom: 28px; }
+
+    .page-header h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px; font-weight: 400;
+      color: var(--text-primary); letter-spacing: -0.01em;
+    }
+
+    .page-header h1 em { font-style: italic; font-weight: 500; }
+    .page-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+    .section-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 15px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 16px; letter-spacing: 0.01em;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px; padding: 22px 24px;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover { transform: translateY(-2px); box-shadow: 0 4px 24px var(--glow); }
+
+    .btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 600;
+      padding: 8px 18px; border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card); color: var(--text-primary);
+      cursor: pointer; transition: all 0.3s ease;
+    }
+
+    .btn:hover { border-color: var(--sage); box-shadow: 0 2px 12px var(--glow); }
+
+    .btn-primary {
+      background: var(--sage); color: var(--warm-white); border-color: var(--sage);
+    }
+
+    .btn-primary:hover { background: #7d9172; }
+
+    .btn-sm {
+      font-size: 11px; padding: 5px 12px; border-radius: 8px;
+    }
+
+    .btn-terracotta {
+      background: var(--terracotta); color: var(--warm-white); border-color: var(--terracotta);
+    }
+
+    .btn-terracotta:hover { background: #b56a4f; }
+
+    /* ── Trending Topics Table ── */
+    .topics-table-wrapper {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .topics-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .topics-table thead {
+      background: rgba(245,240,235,0.6);
+    }
+
+    .topics-table th {
+      font-size: 10.5px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .topics-table td {
+      padding: 14px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid rgba(232,221,211,0.3);
+      vertical-align: middle;
+    }
+
+    .topics-table tbody tr {
+      transition: background 0.15s ease;
+    }
+
+    .topics-table tbody tr:hover {
+      background: rgba(139,158,126,0.04);
+    }
+
+    .topics-table tbody tr:last-child td { border-bottom: none; }
+
+    .topic-name {
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .topic-hook {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+
+    .platform-badge {
+      display: inline-flex; align-items: center;
+      font-size: 10.5px; font-weight: 600;
+      padding: 3px 8px; border-radius: 12px;
+      background: rgba(139,158,126,0.1);
+      color: var(--sage);
+    }
+
+    .potential-dots {
+      display: flex; gap: 3px;
+    }
+
+    .potential-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(232,221,211,0.6);
+    }
+
+    .potential-dot.filled { background: var(--sage); }
+
+    /* ── Competitor Analysis ── */
+    .competitor-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .competitor-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 20px;
+      transition: all 0.3s ease;
+    }
+
+    .competitor-card:hover { transform: translateY(-2px); box-shadow: 0 4px 24px var(--glow); }
+
+    .competitor-handle {
+      font-size: 14px; font-weight: 600;
+      color: var(--text-primary); margin-bottom: 2px;
+    }
+
+    .competitor-bio {
+      font-size: 11.5px; color: var(--text-secondary);
+      line-height: 1.4; margin-bottom: 14px;
+    }
+
+    .competitor-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    .competitor-stat {
+      text-align: center;
+    }
+
+    .competitor-stat-value {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 16px; font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .competitor-stat-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+    }
+
+    .competitor-insight {
+      font-size: 11.5px; color: var(--text-accent);
+      font-style: italic;
+      padding-top: 12px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .competitor-niche {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-accent);
+      margin-bottom: 10px;
+    }
+
+    .competitor-focus-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-bottom: 14px;
+    }
+
+    .competitor-tag {
+      font-size: 10px;
+      font-weight: 500;
+      padding: 2px 8px;
+      border-radius: 10px;
+      background: rgba(139,158,126,0.1);
+      color: var(--sage);
+    }
+
+    .btn-track {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--sage);
+      background: transparent;
+      color: var(--sage);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      margin-top: 12px;
+    }
+
+    .btn-track:hover {
+      background: var(--sage);
+      color: var(--warm-white);
+    }
+
+    .btn-track.tracking {
+      background: rgba(139,158,126,0.12);
+      border-color: rgba(139,158,126,0.3);
+      color: var(--sage);
+      pointer-events: none;
+    }
+
+    /* ── Hook Formula Library ── */
+    .hook-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .hook-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 16px 18px;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .hook-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 12px var(--glow);
+    }
+
+    .hook-category {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .hook-text {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 16px; font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+
+    .hook-actions {
+      display: flex; gap: 8px; align-items: center;
+    }
+
+    .copy-btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10.5px; font-weight: 600;
+      padding: 4px 10px; border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card); color: var(--text-secondary);
+      cursor: pointer; transition: all 0.2s ease;
+    }
+
+    .copy-btn:hover {
+      border-color: var(--sage);
+      color: var(--sage);
+    }
+
+    .copy-btn.copied {
+      background: rgba(139,158,126,0.12);
+      color: var(--sage);
+      border-color: rgba(139,158,126,0.3);
+    }
+
+    .hook-format {
+      font-size: 10px;
+      color: var(--text-secondary);
+      padding: 2px 8px;
+      border-radius: 8px;
+      background: rgba(245,240,235,0.7);
+    }
+
+    /* ── Idea Bank ── */
+    .idea-bank {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+
+    .idea-bank-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .idea-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 14px 16px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text-primary);
+      background: var(--warm-white);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s ease;
+      line-height: 1.5;
+    }
+
+    .idea-textarea::placeholder {
+      color: var(--stone);
+      font-style: italic;
+    }
+
+    .idea-textarea:focus {
+      border-color: var(--sage);
+    }
+
+    .idea-actions {
+      display: flex; gap: 10px; justify-content: flex-end;
+      margin-top: 12px;
+    }
+
+    .saved-ideas {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .saved-idea {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(232,221,211,0.3);
+    }
+
+    .saved-idea:last-child { border-bottom: none; }
+
+    .saved-idea-text {
+      font-size: 13px;
+      color: var(--text-primary);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .saved-idea-time {
+      font-size: 11px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      margin-left: 16px;
+    }
+
+    .saved-idea-delete {
+      font-size: 12px;
+      color: var(--text-secondary);
+      cursor: pointer;
+      margin-left: 12px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+    }
+
+    .saved-idea:hover .saved-idea-delete { opacity: 1; }
+
+    .saved-idea-delete:hover { color: var(--terracotta); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--stone); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar-nav">
+    <div class="sidebar-logo">h</div>
+    <nav>
+      <a href="dashboard.html" class="nav-item" title="Overview">◈<span class="nav-tooltip">Overview</span></a>
+      <a href="content.html" class="nav-item" title="Content">◫<span class="nav-tooltip">Content</span></a>
+      <a href="funnel.html" class="nav-item" title="Funnel">▽<span class="nav-tooltip">Funnel</span></a>
+      <a href="performance.html" class="nav-item" title="Performance">◉<span class="nav-tooltip">Performance</span></a>
+      <a href="clients.html" class="nav-item" title="Clients">♡<span class="nav-tooltip">Clients</span></a>
+      <a href="research.html" class="nav-item active" title="Research">✦<span class="nav-tooltip">Research</span></a>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    <main class="main-content">
+
+      <div class="page-header fade-up" style="animation-delay: 0s;">
+        <h1><em>her, becoming</em> — Content Research</h1>
+        <p>Trending topics, competitor insights, hook formulas, and quick capture idea bank</p>
+      </div>
+
+      <!-- Trending Topics Table -->
+      <div class="section-title fade-up" style="animation-delay: 0.1s;">Trending Wellness Topics</div>
+      <div class="topics-table-wrapper fade-up" style="animation-delay: 0.15s;">
+        <table class="topics-table">
+          <thead>
+            <tr>
+              <th>Topic</th>
+              <th>Hook Angle</th>
+              <th>Platform Fit</th>
+              <th>Potential</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><div class="topic-name">Seed oil awareness</div></td>
+              <td><div class="topic-hook">"The oil in your kitchen might be doing more harm than you think"</div></td>
+              <td><span class="platform-badge">Reels + Carousel</span></td>
+              <td>
+                <div class="potential-dots">
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                </div>
+              </td>
+              <td style="white-space:nowrap;"><button class="btn btn-sm btn-terracotta script-btn" data-topic="Seed oil awareness">Script</button> <button class="btn btn-sm add-idea-btn" data-topic="Seed oil awareness" data-platform="Reels + Carousel" onclick="addToIdeas(this)">+ Ideas</button></td>
+            </tr>
+            <tr>
+              <td><div class="topic-name">Lymphatic drainage routines</div></td>
+              <td><div class="topic-hook">"5 minutes every morning that changed my skin, energy, and bloating"</div></td>
+              <td><span class="platform-badge">Reels</span></td>
+              <td>
+                <div class="potential-dots">
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot"></div>
+                </div>
+              </td>
+              <td style="white-space:nowrap;"><button class="btn btn-sm btn-terracotta script-btn" data-topic="Lymphatic drainage routines">Script</button> <button class="btn btn-sm add-idea-btn" data-topic="Lymphatic drainage routines" data-platform="Reels" onclick="addToIdeas(this)">+ Ideas</button></td>
+            </tr>
+            <tr>
+              <td><div class="topic-name">Non-toxic sunscreen</div></td>
+              <td><div class="topic-hook">"Your sunscreen might be protecting your skin and poisoning your body"</div></td>
+              <td><span class="platform-badge">Carousel</span></td>
+              <td>
+                <div class="potential-dots">
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot"></div>
+                </div>
+              </td>
+              <td style="white-space:nowrap;"><button class="btn btn-sm btn-terracotta script-btn" data-topic="Non-toxic sunscreen">Script</button> <button class="btn btn-sm add-idea-btn" data-topic="Non-toxic sunscreen" data-platform="Carousel" onclick="addToIdeas(this)">+ Ideas</button></td>
+            </tr>
+            <tr>
+              <td><div class="topic-name">Nervous system regulation</div></td>
+              <td><div class="topic-hook">"You're not lazy. Your nervous system is stuck in survival mode."</div></td>
+              <td><span class="platform-badge">Reels + Carousel</span></td>
+              <td>
+                <div class="potential-dots">
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                </div>
+              </td>
+              <td style="white-space:nowrap;"><button class="btn btn-sm btn-terracotta script-btn" data-topic="Nervous system regulation">Script</button> <button class="btn btn-sm add-idea-btn" data-topic="Nervous system regulation" data-platform="Reels + Carousel" onclick="addToIdeas(this)">+ Ideas</button></td>
+            </tr>
+            <tr>
+              <td><div class="topic-name">Castor oil packs</div></td>
+              <td><div class="topic-hook">"The ancient remedy that reduced my inflammation in 3 days"</div></td>
+              <td><span class="platform-badge">Reels</span></td>
+              <td>
+                <div class="potential-dots">
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot"></div>
+                  <div class="potential-dot"></div>
+                </div>
+              </td>
+              <td style="white-space:nowrap;"><button class="btn btn-sm btn-terracotta script-btn" data-topic="Castor oil packs">Script</button> <button class="btn btn-sm add-idea-btn" data-topic="Castor oil packs" data-platform="Reels" onclick="addToIdeas(this)">+ Ideas</button></td>
+            </tr>
+            <tr>
+              <td><div class="topic-name">Mineral-rich water</div></td>
+              <td><div class="topic-hook">"Filtered water might be stripping what your body needs most"</div></td>
+              <td><span class="platform-badge">Reels</span></td>
+              <td>
+                <div class="potential-dots">
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot"></div>
+                </div>
+              </td>
+              <td style="white-space:nowrap;"><button class="btn btn-sm btn-terracotta script-btn" data-topic="Mineral-rich water">Script</button> <button class="btn btn-sm add-idea-btn" data-topic="Mineral-rich water" data-platform="Reels" onclick="addToIdeas(this)">+ Ideas</button></td>
+            </tr>
+            <tr>
+              <td><div class="topic-name">Somatic healing practices</div></td>
+              <td><div class="topic-hook">"Your body remembers what your mind forgot — here's how to release it"</div></td>
+              <td><span class="platform-badge">Carousel</span></td>
+              <td>
+                <div class="potential-dots">
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot"></div>
+                  <div class="potential-dot"></div>
+                </div>
+              </td>
+              <td style="white-space:nowrap;"><button class="btn btn-sm btn-terracotta script-btn" data-topic="Somatic healing practices">Script</button> <button class="btn btn-sm add-idea-btn" data-topic="Somatic healing practices" data-platform="Carousel" onclick="addToIdeas(this)">+ Ideas</button></td>
+            </tr>
+            <tr>
+              <td><div class="topic-name">Non-toxic cleaning swaps</div></td>
+              <td><div class="topic-hook">"3 things under your kitchen sink that are disrupting your hormones"</div></td>
+              <td><span class="platform-badge">Carousel</span></td>
+              <td>
+                <div class="potential-dots">
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot filled"></div>
+                  <div class="potential-dot"></div>
+                </div>
+              </td>
+              <td style="white-space:nowrap;"><button class="btn btn-sm btn-terracotta script-btn" data-topic="Non-toxic cleaning swaps">Script</button> <button class="btn btn-sm add-idea-btn" data-topic="Non-toxic cleaning swaps" data-platform="Carousel" onclick="addToIdeas(this)">+ Ideas</button></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Competitor Analysis -->
+      <div class="section-title fade-up" style="animation-delay: 0.25s;">Competitor Analysis</div>
+      <div class="competitor-grid fade-up" style="animation-delay: 0.3s;">
+
+        <!-- 1. @koyawebb -->
+        <div class="competitor-card" style="border-top: 3px solid var(--sage);">
+          <div class="competitor-handle">@koyawebb</div>
+          <div class="competitor-niche">Holistic health + yoga</div>
+          <div class="competitor-stats">
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">~950K</div>
+              <div class="competitor-stat-label">Followers</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Eng Rate</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Posts/Wk</div>
+            </div>
+          </div>
+          <div class="competitor-focus-tags">
+            <span class="competitor-tag">Spirituality</span>
+            <span class="competitor-tag">Fitness</span>
+            <span class="competitor-tag">Self-Love</span>
+            <span class="competitor-tag">Vegan</span>
+          </div>
+          <div class="competitor-insight">Major wellness voice — aspirational lifestyle + yoga content. Study her Reels hooks and CTA placement.</div>
+          <button class="btn-track" onclick="trackCompetitor(this, 'koyawebb')">Track with Apify</button>
+        </div>
+
+        <!-- 2. @melissawoodhealth -->
+        <div class="competitor-card" style="border-top: 3px solid var(--dusty-rose);">
+          <div class="competitor-handle">@melissawoodhealth</div>
+          <div class="competitor-niche">MWH Method</div>
+          <div class="competitor-stats">
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">~800K</div>
+              <div class="competitor-stat-label">Followers</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Eng Rate</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Posts/Wk</div>
+            </div>
+          </div>
+          <div class="competitor-focus-tags">
+            <span class="competitor-tag">Mindful Movement</span>
+            <span class="competitor-tag">Meditation</span>
+            <span class="competitor-tag">Wellness Lifestyle</span>
+          </div>
+          <div class="competitor-insight">Built a branded method (like Head to Toe). Study how she sells courses through organic content.</div>
+          <button class="btn-track" onclick="trackCompetitor(this, 'melissawoodhealth')">Track with Apify</button>
+        </div>
+
+        <!-- 3. @iamlaladelia -->
+        <div class="competitor-card" style="border-top: 3px solid var(--gold);">
+          <div class="competitor-handle">@iamlaladelia</div>
+          <div class="competitor-niche">Spiritual self-care</div>
+          <div class="competitor-stats">
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">~300K</div>
+              <div class="competitor-stat-label">Followers</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Eng Rate</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Posts/Wk</div>
+            </div>
+          </div>
+          <div class="competitor-focus-tags">
+            <span class="competitor-tag">Transformation</span>
+            <span class="competitor-tag">Vibration</span>
+            <span class="competitor-tag">Self-Care Coaching</span>
+          </div>
+          <div class="competitor-insight">Closest tone to "her, becoming" — daily transformation language. Great hook formulas for identity-shift content.</div>
+          <button class="btn-track" onclick="trackCompetitor(this, 'iamlaladelia')">Track with Apify</button>
+        </div>
+
+        <!-- 4. @tamuthomas__ -->
+        <div class="competitor-card" style="border-top: 3px solid var(--terracotta);">
+          <div class="competitor-handle">@tamuthomas__</div>
+          <div class="competitor-niche">Healing &amp; transformation</div>
+          <div class="competitor-stats">
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">~15K</div>
+              <div class="competitor-stat-label">Followers</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Eng Rate</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Posts/Wk</div>
+            </div>
+          </div>
+          <div class="competitor-focus-tags">
+            <span class="competitor-tag">Trauma-Informed</span>
+            <span class="competitor-tag">Coaching</span>
+            <span class="competitor-tag">Entrepreneurial Women</span>
+          </div>
+          <div class="competitor-insight">Similar audience size and niche. Study her growth tactics and 1-1 coaching funnel structure.</div>
+          <button class="btn-track" onclick="trackCompetitor(this, 'tamuthomas__')">Track with Apify</button>
+        </div>
+
+        <!-- 5. @alyseparker_ -->
+        <div class="competitor-card" style="border-top: 3px solid var(--stone);">
+          <div class="competitor-handle">@alyseparker_</div>
+          <div class="competitor-niche">Holistic wellness</div>
+          <div class="competitor-stats">
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">~166K</div>
+              <div class="competitor-stat-label">Followers</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Eng Rate</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Posts/Wk</div>
+            </div>
+          </div>
+          <div class="competitor-focus-tags">
+            <span class="competitor-tag">Conscious Living</span>
+            <span class="competitor-tag">Retreats</span>
+            <span class="competitor-tag">Online Courses</span>
+          </div>
+          <div class="competitor-insight">Strong retreat + course funnel. Study her content-to-product pipeline and community building approach.</div>
+          <button class="btn-track" onclick="trackCompetitor(this, 'alyseparker_')">Track with Apify</button>
+        </div>
+
+        <!-- 6. @healthcoachkait -->
+        <div class="competitor-card" style="border-top: 3px solid var(--light-sage);">
+          <div class="competitor-handle">@healthcoachkait</div>
+          <div class="competitor-niche">Nutrition coaching</div>
+          <div class="competitor-stats">
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">~200K</div>
+              <div class="competitor-stat-label">Followers</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Eng Rate</div>
+            </div>
+            <div class="competitor-stat">
+              <div class="competitor-stat-value">—</div>
+              <div class="competitor-stat-label">Posts/Wk</div>
+            </div>
+          </div>
+          <div class="competitor-focus-tags">
+            <span class="competitor-tag">Gut Health</span>
+            <span class="competitor-tag">Blood Sugar</span>
+            <span class="competitor-tag">Sustainable Habits</span>
+          </div>
+          <div class="competitor-insight">Nutrition-focused with strong carousel game. Study her educational content format for "her, learning" series.</div>
+          <button class="btn-track" onclick="trackCompetitor(this, 'healthcoachkait')">Track with Apify</button>
+        </div>
+
+      </div>
+
+      <!-- Hook Formula Library -->
+      <div class="section-title fade-up" style="animation-delay: 0.35s;">Hook Formula Library</div>
+      <div class="hook-grid fade-up" style="animation-delay: 0.4s;">
+        <div class="hook-card">
+          <div class="hook-category">Contrarian</div>
+          <div class="hook-text">"Everyone says [common advice] — but here's what actually works"</div>
+          <div class="hook-actions">
+            <button class="copy-btn" data-copy="Everyone says [common advice] — but here's what actually works">Copy</button>
+            <span class="hook-format">Reel / Carousel</span>
+          </div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-category">Curiosity Gap</div>
+          <div class="hook-text">"I stopped [doing X] and within a week, [unexpected result]"</div>
+          <div class="hook-actions">
+            <button class="copy-btn" data-copy="I stopped [doing X] and within a week, [unexpected result]">Copy</button>
+            <span class="hook-format">Reel</span>
+          </div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-category">List / Value</div>
+          <div class="hook-text">"[Number] swaps I made that changed my [health/skin/energy]"</div>
+          <div class="hook-actions">
+            <button class="copy-btn" data-copy="[Number] swaps I made that changed my [health/skin/energy]">Copy</button>
+            <span class="hook-format">Carousel</span>
+          </div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-category">Identity</div>
+          <div class="hook-text">"The woman I'm becoming doesn't [old habit]. She [new identity]."</div>
+          <div class="hook-actions">
+            <button class="copy-btn" data-copy="The woman I'm becoming doesn't [old habit]. She [new identity].">Copy</button>
+            <span class="hook-format">Reel</span>
+          </div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-category">Problem Aware</div>
+          <div class="hook-text">"If you're [common symptom], your [body part] is trying to tell you something"</div>
+          <div class="hook-actions">
+            <button class="copy-btn" data-copy="If you're [common symptom], your [body part] is trying to tell you something">Copy</button>
+            <span class="hook-format">Carousel</span>
+          </div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-category">Transformation</div>
+          <div class="hook-text">"6 months ago I was [before state]. Today I [after state]. Here's what shifted."</div>
+          <div class="hook-actions">
+            <button class="copy-btn" data-copy="6 months ago I was [before state]. Today I [after state]. Here's what shifted.">Copy</button>
+            <span class="hook-format">Reel / Carousel</span>
+          </div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-category">Warning / Urgency</div>
+          <div class="hook-text">"Stop using [product] until you read this label"</div>
+          <div class="hook-actions">
+            <button class="copy-btn" data-copy="Stop using [product] until you read this label">Copy</button>
+            <span class="hook-format">Reel</span>
+          </div>
+        </div>
+        <div class="hook-card">
+          <div class="hook-category">Aspiration</div>
+          <div class="hook-text">"The daily routine that made me feel like the best version of myself"</div>
+          <div class="hook-actions">
+            <button class="copy-btn" data-copy="The daily routine that made me feel like the best version of myself">Copy</button>
+            <span class="hook-format">Reel</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Capture Idea Bank -->
+      <div class="section-title fade-up" style="animation-delay: 0.45s;">Quick Capture — Idea Bank</div>
+      <div class="idea-bank fade-up" style="animation-delay: 0.5s;">
+        <div class="idea-bank-header">
+          <div style="font-size: 13px; color: var(--text-secondary);">Capture ideas as they come — review and move to pipeline later</div>
+        </div>
+        <textarea class="idea-textarea" id="ideaInput" placeholder="Type a content idea, hook, topic, or inspiration..."></textarea>
+        <div class="idea-actions">
+          <button class="btn" id="clearIdea">Clear</button>
+          <button class="btn btn-primary" id="saveIdea">Save Idea</button>
+        </div>
+
+        <div class="saved-ideas" id="savedIdeas">
+          <div class="saved-idea">
+            <div class="saved-idea-text">Do a "what I eat in a day" reel focused on gut-healing foods — show prep, not just finished meals</div>
+            <div class="saved-idea-time">2 hrs ago</div>
+            <div class="saved-idea-delete">×</div>
+          </div>
+          <div class="saved-idea">
+            <div class="saved-idea-text">Carousel idea: "5 things in your bathroom that are disrupting your hormones" — with swap recommendations</div>
+            <div class="saved-idea-time">Yesterday</div>
+            <div class="saved-idea-delete">×</div>
+          </div>
+          <div class="saved-idea">
+            <div class="saved-idea-text">Repurpose Grace's testimonial into a "her, becoming" transformation reel with before/after mindset quotes</div>
+            <div class="saved-idea-time">2 days ago</div>
+            <div class="saved-idea-delete">×</div>
+          </div>
+          <div class="saved-idea">
+            <div class="saved-idea-text">Find a wellness creator for a collab reel — ingredient label reading challenge</div>
+            <div class="saved-idea-time">3 days ago</div>
+            <div class="saved-idea-delete">×</div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ── Copy Buttons ──
+    document.querySelectorAll('.copy-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const text = btn.dataset.copy;
+        navigator.clipboard.writeText(text).then(() => {
+          btn.textContent = 'Copied';
+          btn.classList.add('copied');
+          setTimeout(() => {
+            btn.textContent = 'Copy';
+            btn.classList.remove('copied');
+          }, 2000);
+        });
+      });
+    });
+
+    // ── Script Buttons ──
+    document.querySelectorAll('.script-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const topic = btn.dataset.topic;
+        btn.textContent = 'Generating...';
+        btn.disabled = true;
+        setTimeout(() => {
+          btn.textContent = 'Script';
+          btn.disabled = false;
+          alert('Script generation for "' + topic + '" would connect to the proxy server (proxy.js) for AI-powered script writing.');
+        }, 1000);
+      });
+    });
+
+    // ── Add To Ideas → Pipeline ──
+    function addToIdeas(btn) {
+      const topic = btn.dataset.topic;
+      const platform = btn.dataset.platform || 'Reel';
+      const type = platform.includes('Carousel') ? 'Carousel' : 'Reel';
+      const pillar = '🌿 Non-Toxic';
+
+      const existing = JSON.parse(localStorage.getItem('hb_pipeline_ideas') || '[]');
+      existing.push({ title: topic, pillar, type });
+      localStorage.setItem('hb_pipeline_ideas', JSON.stringify(existing));
+
+      btn.textContent = '✓ Added';
+      btn.style.background = 'var(--sage)';
+      btn.style.color = 'var(--warm-white)';
+      btn.style.borderColor = 'var(--sage)';
+      btn.disabled = true;
+      setTimeout(() => {
+        btn.textContent = '+ Ideas';
+        btn.style.background = '';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+        btn.disabled = false;
+      }, 2000);
+    }
+
+    // ── Idea Bank with localStorage Persistence ──
+    const ideaInput = document.getElementById('ideaInput');
+    const savedIdeas = document.getElementById('savedIdeas');
+
+    function serializeIdeas() {
+      const ideas = [];
+      savedIdeas.querySelectorAll('.saved-idea').forEach(el => {
+        ideas.push({
+          text: el.querySelector('.saved-idea-text').textContent,
+          time: el.querySelector('.saved-idea-time').textContent,
+        });
+      });
+      localStorage.setItem('hb_idea_bank', JSON.stringify(ideas));
+    }
+
+    function restoreIdeas() {
+      const saved = localStorage.getItem('hb_idea_bank');
+      if (!saved) return;
+      try {
+        const ideas = JSON.parse(saved);
+        if (!Array.isArray(ideas)) return;
+        savedIdeas.innerHTML = '';
+        ideas.forEach(item => {
+          const idea = createIdeaElement(item.text, item.time);
+          savedIdeas.appendChild(idea);
+        });
+      } catch (e) {
+        console.error('Failed to restore idea bank:', e);
+      }
+    }
+
+    function createIdeaElement(text, time) {
+      const idea = document.createElement('div');
+      idea.className = 'saved-idea';
+      idea.innerHTML = `
+        <div class="saved-idea-text">${text}</div>
+        <div class="saved-idea-time">${time}</div>
+        <div class="saved-idea-delete">×</div>
+      `;
+      idea.querySelector('.saved-idea-delete').addEventListener('click', () => {
+        idea.remove();
+        serializeIdeas();
+      });
+      return idea;
+    }
+
+    document.getElementById('saveIdea').addEventListener('click', () => {
+      const text = ideaInput.value.trim();
+      if (!text) return;
+      const idea = createIdeaElement(text, 'Just now');
+      savedIdeas.insertBefore(idea, savedIdeas.firstChild);
+      ideaInput.value = '';
+      serializeIdeas();
+    });
+
+    document.getElementById('clearIdea').addEventListener('click', () => {
+      ideaInput.value = '';
+    });
+
+    // ── Delete existing ideas (initial HTML ones before restore) ──
+    document.querySelectorAll('.saved-idea-delete').forEach(btn => {
+      btn.addEventListener('click', () => {
+        btn.closest('.saved-idea').remove();
+        serializeIdeas();
+      });
+    });
+
+    // ── Keyboard shortcut: Cmd+Enter to save ──
+    ideaInput.addEventListener('keydown', e => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+        document.getElementById('saveIdea').click();
+      }
+    });
+
+    // ── Competitor Tracking via Apify ──
+    const APIFY_TOKEN = 'YOUR_APIFY_TOKEN';
+    const API_BASE = 'https://api.apify.com/v2';
+
+    async function trackCompetitor(btn, handle) {
+      const card = btn.closest('.competitor-card');
+      btn.textContent = 'Tracking...';
+      btn.classList.add('tracking');
+
+      try {
+        // Start Instagram scraper run
+        const startRes = await fetch(`${API_BASE}/acts/apify~instagram-scraper/runs?token=${APIFY_TOKEN}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            directUrls: [`https://www.instagram.com/${handle}/`],
+            resultsType: 'posts',
+            resultsLimit: 12
+          })
+        });
+        if (!startRes.ok) throw new Error(`Start failed: ${startRes.status}`);
+        const run = await startRes.json();
+        const runId = run?.data?.id;
+        if (!runId) throw new Error('No run ID returned');
+
+        // Poll for completion
+        let runData;
+        for (let i = 0; i < 60; i++) {
+          await new Promise(r => setTimeout(r, 3000));
+          const pollRes = await fetch(`${API_BASE}/actor-runs/${runId}?token=${APIFY_TOKEN}`);
+          const pollData = await pollRes.json();
+          const status = pollData?.data?.status;
+          if (status === 'SUCCEEDED') { runData = pollData.data; break; }
+          if (status === 'FAILED' || status === 'ABORTED' || status === 'TIMED-OUT') throw new Error(`Run ${status}`);
+        }
+        if (!runData) throw new Error('Polling timeout');
+
+        // Fetch dataset items
+        const dsId = runData.defaultDatasetId;
+        const itemsRes = await fetch(`${API_BASE}/datasets/${dsId}/items?token=${APIFY_TOKEN}`);
+        const items = await itemsRes.json();
+
+        if (items.length > 0) {
+          const profile = items[0];
+          const posts = profile.latestPosts || items;
+          const followers = profile.followersCount || 0;
+          const totalLikes = posts.reduce((s, p) => s + (p.likesCount || 0), 0);
+          const totalComments = posts.reduce((s, p) => s + (p.commentsCount || 0), 0);
+          const engRate = followers > 0 && posts.length > 0
+            ? ((totalLikes + totalComments) / posts.length / followers * 100).toFixed(1) + '%'
+            : '—';
+          const postsPerWeek = posts.length >= 2 ? estimatePostsPerWeek(posts) : '—';
+
+          // Update card stats
+          const statValues = card.querySelectorAll('.competitor-stat-value');
+          if (followers > 0) statValues[0].textContent = formatCount(followers);
+          statValues[1].textContent = engRate;
+          statValues[2].textContent = postsPerWeek;
+
+          // Save to localStorage
+          const tracked = JSON.parse(localStorage.getItem('hb_competitor_data') || '{}');
+          tracked[handle] = { followers, engRate, postsPerWeek, updated: Date.now() };
+          localStorage.setItem('hb_competitor_data', JSON.stringify(tracked));
+        }
+
+        btn.textContent = '✓ Tracked';
+      } catch (e) {
+        console.error('Track failed:', e);
+        btn.textContent = 'Failed — Retry';
+        btn.classList.remove('tracking');
+        btn.style.borderColor = 'var(--terracotta)';
+        btn.style.color = 'var(--terracotta)';
+        setTimeout(() => {
+          btn.textContent = 'Track with Apify';
+          btn.classList.remove('tracking');
+          btn.style.borderColor = '';
+          btn.style.color = '';
+        }, 3000);
+      }
+    }
+
+    function estimatePostsPerWeek(posts) {
+      const timestamps = posts
+        .map(p => p.timestamp ? new Date(p.timestamp).getTime() : null)
+        .filter(Boolean)
+        .sort((a, b) => b - a);
+      if (timestamps.length < 2) return '—';
+      const spanMs = timestamps[0] - timestamps[timestamps.length - 1];
+      const weeks = spanMs / (7 * 24 * 60 * 60 * 1000);
+      if (weeks < 0.5) return '—';
+      return (timestamps.length / weeks).toFixed(1);
+    }
+
+    function formatCount(n) {
+      if (n >= 1000000) return (n / 1000000).toFixed(1) + 'M';
+      if (n >= 1000) return (n / 1000).toFixed(1) + 'K';
+      return n.toString();
+    }
+
+    // Restore saved competitor data on load
+    function restoreCompetitorData() {
+      const tracked = JSON.parse(localStorage.getItem('hb_competitor_data') || '{}');
+      document.querySelectorAll('.competitor-card').forEach(card => {
+        const btn = card.querySelector('.btn-track');
+        if (!btn) return;
+        const handle = btn.getAttribute('onclick').match(/'([^']+)'/)?.[1];
+        if (handle && tracked[handle]) {
+          const d = tracked[handle];
+          const statValues = card.querySelectorAll('.competitor-stat-value');
+          if (d.followers > 0) statValues[0].textContent = formatCount(d.followers);
+          statValues[1].textContent = d.engRate || '—';
+          statValues[2].textContent = d.postsPerWeek || '—';
+          btn.textContent = '✓ Tracked';
+          btn.classList.add('tracking');
+        }
+      });
+    }
+
+    // ── Restore on load ──
+    window.addEventListener('DOMContentLoaded', () => {
+      restoreIdeas();
+      restoreCompetitorData();
+    });
+  </script>
+</body>
+</html>

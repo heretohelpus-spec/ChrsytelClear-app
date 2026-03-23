@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>her, becoming — Content Calendar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sand: #E8DDD3;
+      --warm-cream: #F5F0EB;
+      --deep-earth: #3D2E1F;
+      --terracotta: #C4775B;
+      --sage: #8B9E7E;
+      --dusty-rose: #C9A1A0;
+      --charcoal: #2B2B2B;
+      --stone: #A69889;
+      --light-sage: #D4DFCD;
+      --warm-white: #FDFBF8;
+      --gold: #B8963E;
+      --blush: #E8C8C0;
+      --bg-primary: var(--warm-white);
+      --bg-secondary: var(--warm-cream);
+      --bg-card: var(--warm-white);
+      --text-primary: var(--deep-earth);
+      --text-secondary: var(--stone);
+      --text-accent: var(--terracotta);
+      --border: var(--sand);
+      --border-subtle: rgba(232, 221, 211, 0.5);
+      --glow: rgba(139, 158, 126, 0.15);
+      --success: var(--sage);
+      --warning: var(--gold);
+      --attention: var(--terracotta);
+      --highlight: var(--dusty-rose);
+    }
+
+    body {
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      color: var(--text-primary);
+      background: linear-gradient(165deg, var(--warm-white) 0%, rgba(232,221,211,0.25) 40%, var(--warm-cream) 100%);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      right: -10%;
+      width: 60%;
+      height: 60%;
+      background: radial-gradient(ellipse, rgba(139,158,126,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -15%;
+      left: -5%;
+      width: 50%;
+      height: 50%;
+      background: radial-gradient(ellipse, rgba(201,161,160,0.05) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Sidebar Nav ── */
+    .sidebar-nav {
+      position: fixed;
+      left: 0;
+      top: 0;
+      width: 62px;
+      height: 100vh;
+      background: var(--warm-white);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      z-index: 100;
+    }
+
+    .sidebar-logo {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 32px;
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .sidebar-nav nav {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+
+    .nav-item {
+      width: 42px;
+      height: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      font-size: 16px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .nav-item:hover {
+      color: var(--text-primary);
+      background: rgba(139, 158, 126, 0.08);
+    }
+
+    .nav-item.active {
+      color: var(--sage);
+      background: rgba(139, 158, 126, 0.12);
+    }
+
+    .nav-item.active::before {
+      content: '';
+      position: absolute;
+      left: -10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 3px;
+      height: 20px;
+      background: var(--sage);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .nav-tooltip {
+      position: absolute;
+      left: 52px;
+      background: var(--deep-earth);
+      color: var(--warm-white);
+      font-size: 12px;
+      font-weight: 500;
+      padding: 5px 10px;
+      border-radius: 6px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      z-index: 200;
+    }
+
+    .nav-item:hover .nav-tooltip { opacity: 1; }
+
+    /* ── Main Layout ── */
+    .main-wrapper {
+      margin-left: 62px;
+      flex: 1;
+      display: flex;
+      min-height: 100vh;
+      position: relative;
+      z-index: 1;
+    }
+
+    .main-content {
+      flex: 1;
+      padding: 28px 32px;
+      overflow-y: auto;
+    }
+
+    .page-header { margin-bottom: 28px; }
+
+    .page-header h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px;
+      font-weight: 400;
+      color: var(--text-primary);
+      letter-spacing: -0.01em;
+    }
+
+    .page-header h1 em { font-style: italic; font-weight: 500; }
+
+    .page-header p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 22px 24px;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 24px var(--glow);
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 16px;
+      letter-spacing: 0.01em;
+    }
+
+    /* ── Badge ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+    }
+
+    .badge-scheduled { background: rgba(139,158,126,0.12); color: var(--sage); }
+    .badge-scheduled .badge-dot { background: var(--sage); }
+    .badge-draft { background: rgba(184,150,62,0.12); color: var(--gold); }
+    .badge-draft .badge-dot { background: var(--gold); }
+    .badge-idea { background: rgba(166,152,137,0.12); color: var(--stone); }
+    .badge-idea .badge-dot { background: var(--stone); }
+
+    .badge-reel { background: rgba(196,119,91,0.12); color: var(--terracotta); }
+    .badge-carousel { background: rgba(139,158,126,0.12); color: var(--sage); }
+    .badge-story { background: rgba(201,161,160,0.12); color: var(--dusty-rose); }
+
+    .pillar-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      padding: 2px 8px;
+      border-radius: 12px;
+      background: rgba(245,240,235,0.7);
+    }
+
+    /* ── Calendar Grid ── */
+    .calendar-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .calendar-nav-btn {
+      width: 34px;
+      height: 34px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      font-size: 14px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+    }
+
+    .calendar-nav-btn:hover {
+      border-color: var(--sage);
+      color: var(--sage);
+    }
+
+    .calendar-month {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    .calendar-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--sage);
+      box-shadow: 0 2px 12px var(--glow);
+    }
+
+    .btn-primary {
+      background: var(--sage);
+      color: var(--warm-white);
+      border-color: var(--sage);
+    }
+
+    .btn-primary:hover {
+      background: #7d9172;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 1px;
+      background: var(--border-subtle);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 28px;
+    }
+
+    .calendar-day-header {
+      background: rgba(245,240,235,0.8);
+      padding: 10px 8px;
+      text-align: center;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+    }
+
+    .calendar-day {
+      background: var(--bg-card);
+      min-height: 120px;
+      padding: 8px;
+      position: relative;
+      transition: background 0.2s ease;
+    }
+
+    .calendar-day:hover {
+      background: rgba(245,240,235,0.4);
+    }
+
+    .calendar-day.today {
+      background: rgba(139,158,126,0.05);
+    }
+
+    .calendar-day.other-month {
+      opacity: 0.35;
+    }
+
+    .calendar-date {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 6px;
+    }
+
+    .calendar-day.today .calendar-date {
+      color: var(--sage);
+      background: rgba(139,158,126,0.15);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .calendar-post {
+      background: rgba(245,240,235,0.7);
+      border-left: 3px solid var(--sage);
+      border-radius: 6px;
+      padding: 4px 6px;
+      margin-bottom: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .calendar-post:hover {
+      background: rgba(232,221,211,0.6);
+    }
+
+    .calendar-post.status-draft { border-left-color: var(--gold); }
+    .calendar-post.status-idea { border-left-color: var(--stone); }
+    .calendar-post.status-scheduled { border-left-color: var(--sage); }
+
+    .calendar-post-title {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: var(--text-primary);
+      line-height: 1.3;
+      margin-bottom: 2px;
+    }
+
+    .calendar-post-meta {
+      font-size: 9.5px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Content Series Overview ── */
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .series-card { position: relative; overflow: hidden; }
+    .series-card-choosing { border-top: 3px solid var(--dusty-rose); }
+    .series-card-learning { border-top: 3px solid var(--sage); }
+    .series-card-becoming { border-top: 3px solid var(--terracotta); }
+
+    .series-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .series-type {
+      font-size: 11px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+    }
+
+    .series-stats {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .series-stat-value {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .series-stat-label {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* ── Batch Scheduling ── */
+    .batch-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 24px;
+      margin-bottom: 28px;
+    }
+
+    .batch-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .batch-slots {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+
+    .batch-slot {
+      border: 2px dashed var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      min-height: 100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .batch-slot:hover {
+      border-color: var(--sage);
+      background: rgba(139,158,126,0.04);
+    }
+
+    .batch-slot.filled {
+      border-style: solid;
+      border-color: var(--border-subtle);
+      background: rgba(245,240,235,0.4);
+    }
+
+    .batch-slot-icon {
+      font-size: 20px;
+      color: var(--text-secondary);
+    }
+
+    .batch-slot-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .batch-slot-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .batch-slot-date {
+      font-size: 10.5px;
+      color: var(--text-secondary);
+    }
+
+    /* ── Pillar Performance ── */
+    .pillar-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .pillar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 16px;
+      padding: 18px 16px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .pillar-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 24px var(--glow);
+    }
+
+    .pillar-icon { font-size: 22px; margin-bottom: 8px; }
+
+    .pillar-name {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 10px;
+    }
+
+    .pillar-stat-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 11px;
+      margin-bottom: 4px;
+    }
+
+    .pillar-stat-row span:first-child { color: var(--text-secondary); }
+    .pillar-stat-row span:last-child {
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      color: var(--text-primary);
+    }
+
+    .pillar-bar-track {
+      height: 4px;
+      background: rgba(232,221,211,0.5);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-top: 10px;
+    }
+
+    .pillar-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .pillar-bar-fill.nontoxic { background: var(--sage); }
+    .pillar-bar-fill.nutrition { background: var(--terracotta); }
+    .pillar-bar-fill.spiritual { background: var(--gold); }
+    .pillar-bar-fill.lifestyle { background: var(--dusty-rose); }
+
+    /* ── Fade-up ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--stone); }
+  </style>
+</head>
+<body>
+
+  <!-- ═══ Sidebar Nav ═══ -->
+  <aside class="sidebar-nav">
+    <div class="sidebar-logo">h</div>
+    <nav>
+      <a href="dashboard.html" class="nav-item" title="Overview">
+        ◈
+        <span class="nav-tooltip">Overview</span>
+      </a>
+      <a href="content.html" class="nav-item active" title="Content">
+        ◫
+        <span class="nav-tooltip">Content</span>
+      </a>
+      <a href="funnel.html" class="nav-item" title="Funnel">
+        ▽
+        <span class="nav-tooltip">Funnel</span>
+      </a>
+      <a href="performance.html" class="nav-item" title="Performance">
+        ◉
+        <span class="nav-tooltip">Performance</span>
+      </a>
+      <a href="clients.html" class="nav-item" title="Clients">
+        ♡
+        <span class="nav-tooltip">Clients</span>
+      </a>
+      <a href="research.html" class="nav-item" title="Research">
+        ✦
+        <span class="nav-tooltip">Research</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- ═══ Main ═══ -->
+  <div class="main-wrapper">
+    <main class="main-content">
+
+      <div class="page-header fade-up" style="animation-delay: 0s;">
+        <h1><em>her, becoming</em> — Content Calendar</h1>
+        <p>Plan, schedule, and track all content across series and pillars</p>
+      </div>
+
+      <!-- Calendar Controls -->
+      <div class="calendar-controls fade-up" style="animation-delay: 0.1s;">
+        <div class="calendar-nav">
+          <button class="calendar-nav-btn" id="prevWeek">‹</button>
+          <span class="calendar-month">March 2026</span>
+          <button class="calendar-nav-btn" id="nextWeek">›</button>
+        </div>
+        <div class="calendar-actions">
+          <button class="btn">Filter by pillar</button>
+          <button class="btn btn-primary">+ New Post</button>
+        </div>
+      </div>
+
+      <!-- Calendar Grid -->
+      <div class="calendar-grid fade-up" style="animation-delay: 0.15s;">
+        <div class="calendar-day-header">Mon</div>
+        <div class="calendar-day-header">Tue</div>
+        <div class="calendar-day-header">Wed</div>
+        <div class="calendar-day-header">Thu</div>
+        <div class="calendar-day-header">Fri</div>
+        <div class="calendar-day-header">Sat</div>
+        <div class="calendar-day-header">Sun</div>
+
+        <!-- Week 1: Mar 9–15 -->
+        <div class="calendar-day">
+          <div class="calendar-date">9</div>
+          <div class="calendar-post status-scheduled">
+            <div class="calendar-post-title">her, choosing — Linen sheets</div>
+            <div class="calendar-post-meta">Reel · 🕊️ Lifestyle</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">10</div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">11</div>
+          <div class="calendar-post status-scheduled">
+            <div class="calendar-post-title">5 ingredients to avoid</div>
+            <div class="calendar-post-meta">Carousel · 🌿 Non-Toxic</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">12</div>
+          <div class="calendar-post status-scheduled">
+            <div class="calendar-post-title">What is Head to Toe?</div>
+            <div class="calendar-post-meta">Carousel · ✨ Spiritual</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">13</div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">14</div>
+          <div class="calendar-post status-scheduled">
+            <div class="calendar-post-title">Organic cotton tee</div>
+            <div class="calendar-post-meta">Reel · 🕊️ Lifestyle</div>
+          </div>
+        </div>
+        <div class="calendar-day today">
+          <div class="calendar-date">15</div>
+          <div class="calendar-post status-scheduled">
+            <div class="calendar-post-title">Spring water reel</div>
+            <div class="calendar-post-meta">Reel · 🕊️ Lifestyle</div>
+          </div>
+          <div class="calendar-post status-draft">
+            <div class="calendar-post-title">5 Simple Swaps promo</div>
+            <div class="calendar-post-meta">Carousel · 🌿 Non-Toxic</div>
+          </div>
+        </div>
+
+        <!-- Week 2: Mar 16–22 -->
+        <div class="calendar-day">
+          <div class="calendar-date">16</div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">17</div>
+          <div class="calendar-post status-scheduled">
+            <div class="calendar-post-title">Client spotlight: Grace's story</div>
+            <div class="calendar-post-meta">Reel · ✨ Spiritual</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">18</div>
+          <div class="calendar-post status-draft">
+            <div class="calendar-post-title">Farmers market haul</div>
+            <div class="calendar-post-meta">Reel · 🍃 Nutrition</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">19</div>
+          <div class="calendar-post status-draft">
+            <div class="calendar-post-title">Ingredient label red flags</div>
+            <div class="calendar-post-meta">Carousel · 🌿 Non-Toxic</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">20</div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">21</div>
+          <div class="calendar-post status-idea">
+            <div class="calendar-post-title">Cotton vs polyester</div>
+            <div class="calendar-post-meta">Carousel · 🌿 Non-Toxic</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">22</div>
+        </div>
+
+        <!-- Week 3: Mar 23–29 -->
+        <div class="calendar-day">
+          <div class="calendar-date">23</div>
+          <div class="calendar-post status-idea">
+            <div class="calendar-post-title">3 signs body asking for change</div>
+            <div class="calendar-post-meta">Reel · ✨ Spiritual</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">24</div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">25</div>
+          <div class="calendar-post status-idea">
+            <div class="calendar-post-title">Morning routine swaps</div>
+            <div class="calendar-post-meta">Carousel · 🌿 Non-Toxic</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">26</div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">27</div>
+          <div class="calendar-post status-idea">
+            <div class="calendar-post-title">Clean pantry essentials</div>
+            <div class="calendar-post-meta">Carousel · 🍃 Nutrition</div>
+          </div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">28</div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">29</div>
+        </div>
+
+        <!-- Week 4 partial: Mar 30–31 + Apr 1–5 -->
+        <div class="calendar-day">
+          <div class="calendar-date">30</div>
+        </div>
+        <div class="calendar-day">
+          <div class="calendar-date">31</div>
+          <div class="calendar-post status-idea">
+            <div class="calendar-post-title">Gut health reset DITL</div>
+            <div class="calendar-post-meta">Reel · 🍃 Nutrition</div>
+          </div>
+        </div>
+        <div class="calendar-day other-month"><div class="calendar-date">1</div></div>
+        <div class="calendar-day other-month"><div class="calendar-date">2</div></div>
+        <div class="calendar-day other-month"><div class="calendar-date">3</div></div>
+        <div class="calendar-day other-month"><div class="calendar-date">4</div></div>
+        <div class="calendar-day other-month"><div class="calendar-date">5</div></div>
+      </div>
+
+      <!-- Content Series Overview -->
+      <div class="section-title fade-up" style="animation-delay: 0.25s;">Content Series</div>
+      <div class="grid-3 fade-up" style="animation-delay: 0.3s;">
+        <div class="card series-card series-card-choosing">
+          <div class="series-name">her, choosing</div>
+          <div class="series-type">Silent / Soft Music Reels</div>
+          <div class="series-stats">
+            <div><div class="series-stat-value">—</div><div class="series-stat-label">Published</div></div>
+            <div><div class="series-stat-value">—</div><div class="series-stat-label">Scheduled</div></div>
+            <div><div class="series-stat-value">—</div><div class="series-stat-label">Avg Eng.</div></div>
+          </div>
+        </div>
+        <div class="card series-card series-card-learning">
+          <div class="series-name">her, learning</div>
+          <div class="series-type">Educational Carousels</div>
+          <div class="series-stats">
+            <div><div class="series-stat-value">—</div><div class="series-stat-label">Published</div></div>
+            <div><div class="series-stat-value">—</div><div class="series-stat-label">Scheduled</div></div>
+            <div><div class="series-stat-value">—</div><div class="series-stat-label">Avg Eng.</div></div>
+          </div>
+        </div>
+        <div class="card series-card series-card-becoming">
+          <div class="series-name">her, becoming</div>
+          <div class="series-type">Transformation Testimonials</div>
+          <div class="series-stats">
+            <div><div class="series-stat-value">—</div><div class="series-stat-label">Published</div></div>
+            <div><div class="series-stat-value">—</div><div class="series-stat-label">Scheduled</div></div>
+            <div><div class="series-stat-value">—</div><div class="series-stat-label">Avg Eng.</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Batch Scheduling -->
+      <div class="section-title fade-up" style="animation-delay: 0.35s;">Batch Scheduling</div>
+      <div class="batch-section fade-up" style="animation-delay: 0.4s;">
+        <div class="batch-header">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">Next Week's Batch — Mar 16–22</div>
+            <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 2px;">3 of 4 slots filled</div>
+          </div>
+          <button class="btn btn-primary">Schedule All</button>
+        </div>
+        <div class="batch-slots">
+          <div class="batch-slot filled">
+            <div class="batch-slot-title">Client spotlight: Grace's story</div>
+            <div class="badge badge-reel" style="font-size: 10px;">Reel</div>
+            <div class="batch-slot-date">Tue Mar 17 · 11:30 AM</div>
+          </div>
+          <div class="batch-slot filled">
+            <div class="batch-slot-title">Farmers market haul</div>
+            <div class="badge badge-reel" style="font-size: 10px;">Reel</div>
+            <div class="batch-slot-date">Wed Mar 18 · 10:00 AM</div>
+          </div>
+          <div class="batch-slot filled">
+            <div class="batch-slot-title">Ingredient label red flags</div>
+            <div class="badge badge-carousel" style="font-size: 10px;">Carousel</div>
+            <div class="batch-slot-date">Thu Mar 19 · 12:00 PM</div>
+          </div>
+          <div class="batch-slot">
+            <div class="batch-slot-icon">+</div>
+            <div class="batch-slot-label">Add content</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Content Pillar Performance -->
+      <div class="section-title fade-up" style="animation-delay: 0.45s;">Content Pillar Breakdown</div>
+      <div class="pillar-grid fade-up" style="animation-delay: 0.5s;">
+        <div class="pillar-card">
+          <div class="pillar-icon">🌿</div>
+          <div class="pillar-name">Non-Toxic Living</div>
+          <div class="pillar-stat-row"><span>Posts</span><span>—</span></div>
+          <div class="pillar-stat-row"><span>Avg Reach</span><span>—</span></div>
+          <div class="pillar-stat-row"><span>Avg Engagement</span><span>—</span></div>
+          <div class="pillar-bar-track"><div class="pillar-bar-fill nontoxic" style="width: 0%;"></div></div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">🍃</div>
+          <div class="pillar-name">Nutrition</div>
+          <div class="pillar-stat-row"><span>Posts</span><span>—</span></div>
+          <div class="pillar-stat-row"><span>Avg Reach</span><span>—</span></div>
+          <div class="pillar-stat-row"><span>Avg Engagement</span><span>—</span></div>
+          <div class="pillar-bar-track"><div class="pillar-bar-fill nutrition" style="width: 0%;"></div></div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">✨</div>
+          <div class="pillar-name">Spiritual Alignment</div>
+          <div class="pillar-stat-row"><span>Posts</span><span>—</span></div>
+          <div class="pillar-stat-row"><span>Avg Reach</span><span>—</span></div>
+          <div class="pillar-stat-row"><span>Avg Engagement</span><span>—</span></div>
+          <div class="pillar-bar-track"><div class="pillar-bar-fill spiritual" style="width: 0%;"></div></div>
+        </div>
+        <div class="pillar-card">
+          <div class="pillar-icon">🕊️</div>
+          <div class="pillar-name">Lifestyle</div>
+          <div class="pillar-stat-row"><span>Posts</span><span>—</span></div>
+          <div class="pillar-stat-row"><span>Avg Reach</span><span>—</span></div>
+          <div class="pillar-stat-row"><span>Avg Engagement</span><span>—</span></div>
+          <div class="pillar-bar-track"><div class="pillar-bar-fill lifestyle" style="width: 0%;"></div></div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>

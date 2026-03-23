@@ -1,0 +1,1268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>her, becoming — Funnel Pipeline</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sand: #E8DDD3;
+      --warm-cream: #F5F0EB;
+      --deep-earth: #3D2E1F;
+      --terracotta: #C4775B;
+      --sage: #8B9E7E;
+      --dusty-rose: #C9A1A0;
+      --charcoal: #2B2B2B;
+      --stone: #A69889;
+      --light-sage: #D4DFCD;
+      --warm-white: #FDFBF8;
+      --gold: #B8963E;
+      --blush: #E8C8C0;
+      --bg-primary: var(--warm-white);
+      --bg-secondary: var(--warm-cream);
+      --bg-card: var(--warm-white);
+      --text-primary: var(--deep-earth);
+      --text-secondary: var(--stone);
+      --text-accent: var(--terracotta);
+      --border: var(--sand);
+      --border-subtle: rgba(232, 221, 211, 0.5);
+      --glow: rgba(139, 158, 126, 0.15);
+      --success: var(--sage);
+      --warning: var(--gold);
+      --attention: var(--terracotta);
+      --highlight: var(--dusty-rose);
+    }
+
+    body {
+      font-family: 'DM Sans', 'Helvetica Neue', sans-serif;
+      color: var(--text-primary);
+      background: linear-gradient(165deg, var(--warm-white) 0%, rgba(232,221,211,0.25) 40%, var(--warm-cream) 100%);
+      min-height: 100vh;
+      display: flex;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      right: -10%;
+      width: 60%;
+      height: 60%;
+      background: radial-gradient(ellipse, rgba(139,158,126,0.06) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -15%;
+      left: -5%;
+      width: 50%;
+      height: 50%;
+      background: radial-gradient(ellipse, rgba(201,161,160,0.05) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .sidebar-nav {
+      position: fixed;
+      left: 0; top: 0;
+      width: 62px; height: 100vh;
+      background: var(--warm-white);
+      border-right: 1px solid var(--border-subtle);
+      display: flex; flex-direction: column; align-items: center;
+      padding: 20px 0; z-index: 100;
+    }
+
+    .sidebar-logo {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic; font-size: 18px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 32px;
+      letter-spacing: -0.02em; line-height: 1;
+    }
+
+    .sidebar-nav nav { display: flex; flex-direction: column; gap: 6px; flex: 1; }
+
+    .nav-item {
+      width: 42px; height: 42px;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 12px; font-size: 16px;
+      color: var(--text-secondary); text-decoration: none;
+      transition: all 0.3s ease; position: relative; cursor: pointer;
+    }
+
+    .nav-item:hover { color: var(--text-primary); background: rgba(139,158,126,0.08); }
+    .nav-item.active { color: var(--sage); background: rgba(139,158,126,0.12); }
+
+    .nav-item.active::before {
+      content: ''; position: absolute; left: -10px; top: 50%;
+      transform: translateY(-50%); width: 3px; height: 20px;
+      background: var(--sage); border-radius: 0 3px 3px 0;
+    }
+
+    .nav-tooltip {
+      position: absolute; left: 52px;
+      background: var(--deep-earth); color: var(--warm-white);
+      font-size: 12px; font-weight: 500; padding: 5px 10px;
+      border-radius: 6px; white-space: nowrap;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 200;
+    }
+
+    .nav-item:hover .nav-tooltip { opacity: 1; }
+
+    .main-wrapper {
+      margin-left: 62px; flex: 1; display: flex;
+      min-height: 100vh; position: relative; z-index: 1;
+    }
+
+    .main-content { flex: 1; padding: 28px 32px; overflow-y: auto; }
+
+    .page-header { margin-bottom: 28px; }
+
+    .page-header h1 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 28px; font-weight: 400;
+      color: var(--text-primary); letter-spacing: -0.01em;
+    }
+
+    .page-header h1 em { font-style: italic; font-weight: 500; }
+    .page-header p { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+    .section-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 15px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 16px; letter-spacing: 0.01em;
+    }
+
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px; padding: 22px 24px;
+      transition: all 0.3s ease;
+    }
+
+    .card:hover { transform: translateY(-2px); box-shadow: 0 4px 24px var(--glow); }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 20px;
+    }
+
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; }
+
+    /* ── Kanban ── */
+    .kanban-board {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .kanban-column {
+      background: rgba(245,240,235,0.5);
+      border-radius: 14px;
+      padding: 14px 12px;
+      min-height: 380px;
+      transition: background 0.2s ease;
+    }
+
+    .kanban-column.drag-over {
+      background: rgba(139,158,126,0.08);
+      outline: 2px dashed var(--sage);
+      outline-offset: -2px;
+    }
+
+    .kanban-column-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 12px; padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .kanban-column-title {
+      font-size: 11.5px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary);
+    }
+
+    .kanban-count {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 11px; font-weight: 600;
+      background: var(--border-subtle); color: var(--text-secondary);
+      width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .kanban-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      cursor: grab;
+      transition: all 0.3s ease;
+      user-select: none;
+    }
+
+    .kanban-card:active { cursor: grabbing; }
+
+    .kanban-card:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 2px 12px var(--glow);
+    }
+
+    .kanban-card.dragging {
+      opacity: 0.5;
+      transform: rotate(2deg);
+    }
+
+    .kanban-card-title {
+      font-size: 12.5px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 6px; line-height: 1.35;
+    }
+
+    .kanban-card-meta {
+      display: flex; justify-content: space-between; align-items: center;
+    }
+
+    .kanban-pillar { font-size: 10px; color: var(--text-secondary); }
+
+    .kanban-type {
+      font-size: 10px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.04em;
+      color: var(--text-accent);
+    }
+
+    .kanban-card-date {
+      font-size: 10px; color: var(--sage); font-weight: 500; margin-top: 6px;
+    }
+
+    /* ── Schedule Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(61,46,31,0.3);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      align-items: center; justify-content: center;
+    }
+
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 32px;
+      width: 420px;
+      max-width: 90%;
+      box-shadow: 0 20px 60px rgba(61,46,31,0.15);
+    }
+
+    .modal h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 8px;
+    }
+
+    .modal p {
+      font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;
+    }
+
+    .modal-field { margin-bottom: 16px; }
+
+    .modal-field label {
+      display: block; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary); margin-bottom: 6px;
+    }
+
+    .modal-field input, .modal-field select {
+      width: 100%; padding: 10px 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px; color: var(--text-primary);
+      background: var(--warm-white);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .modal-field input:focus, .modal-field select:focus {
+      border-color: var(--sage);
+    }
+
+    .modal-actions {
+      display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;
+    }
+
+    .btn {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px; font-weight: 600;
+      padding: 8px 18px; border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card); color: var(--text-primary);
+      cursor: pointer; transition: all 0.3s ease;
+    }
+
+    .btn:hover { border-color: var(--sage); box-shadow: 0 2px 12px var(--glow); }
+
+    .btn-primary {
+      background: var(--sage); color: var(--warm-white); border-color: var(--sage);
+    }
+
+    .btn-primary:hover { background: #7d9172; }
+
+    /* ── Funnel Visualization ── */
+    .funnel-viz {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 28px;
+      margin-bottom: 28px;
+    }
+
+    .funnel-stages {
+      display: flex;
+      align-items: flex-end;
+      gap: 0;
+      height: 200px;
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .funnel-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    .funnel-bar-wrapper {
+      width: 100%;
+      height: 200px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      position: relative;
+    }
+
+    .funnel-bar {
+      width: 70%;
+      border-radius: 10px 10px 0 0;
+      transition: height 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+      position: relative;
+    }
+
+    .funnel-bar.stage-ig { background: linear-gradient(180deg, var(--sage), var(--light-sage)); }
+    .funnel-bar.stage-guide { background: linear-gradient(180deg, var(--dusty-rose), var(--blush)); }
+    .funnel-bar.stage-book { background: linear-gradient(180deg, var(--gold), #D4B262); }
+    .funnel-bar.stage-coaching { background: linear-gradient(180deg, var(--terracotta), #D4927D); }
+
+    .funnel-arrow {
+      position: absolute;
+      right: -20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 16px;
+      z-index: 2;
+    }
+
+    .funnel-labels {
+      display: flex;
+      gap: 0;
+    }
+
+    .funnel-label {
+      flex: 1;
+      text-align: center;
+      padding-top: 14px;
+    }
+
+    .funnel-label-name {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .funnel-label-count {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .funnel-label-desc {
+      font-size: 11px;
+      color: var(--text-secondary);
+    }
+
+    .funnel-conversion-row {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .funnel-conversion {
+      text-align: center;
+    }
+
+    .funnel-conversion-value {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--sage);
+    }
+
+    .funnel-conversion-label {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    /* ── Revenue Cards ── */
+    .revenue-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .revenue-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 22px 20px;
+      transition: all 0.3s ease;
+    }
+
+    .revenue-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 24px var(--glow);
+    }
+
+    .revenue-card-label {
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary); margin-bottom: 8px;
+    }
+
+    .revenue-card-value {
+      font-family: 'DM Sans', monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 28px; font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .revenue-card-sub {
+      font-size: 11.5px; color: var(--text-secondary); margin-top: 4px;
+    }
+
+    .revenue-card-trend {
+      font-size: 12px; font-weight: 600; margin-top: 6px;
+    }
+
+    .revenue-card-trend.up { color: var(--sage); }
+
+    .revenue-card:nth-child(1) { border-top: 3px solid var(--sage); }
+    .revenue-card:nth-child(2) { border-top: 3px solid var(--dusty-rose); }
+    .revenue-card:nth-child(3) { border-top: 3px solid var(--gold); }
+    .revenue-card:nth-child(4) { border-top: 3px solid var(--terracotta); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .fade-up {
+      opacity: 0;
+      animation: fadeUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    /* ── Script Generation UI ── */
+    .kanban-card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 8px;
+    }
+
+    .btn-script {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 5px 12px;
+      border-radius: 8px;
+      border: 1px solid var(--sage);
+      background: transparent;
+      color: var(--sage);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+    }
+
+    .btn-script:hover {
+      background: var(--sage);
+      color: var(--warm-white);
+    }
+
+    .btn-script.generating {
+      border-color: var(--gold);
+      color: var(--gold);
+      pointer-events: none;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    .script-panel {
+      margin-top: 10px;
+      display: none;
+    }
+
+    .script-panel.visible {
+      display: block;
+    }
+
+    .script-textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 10px 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: var(--text-primary);
+      background: var(--warm-cream);
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .script-textarea:focus {
+      border-color: var(--sage);
+    }
+
+    .script-save-row {
+      display: flex;
+      gap: 6px;
+      margin-top: 6px;
+    }
+
+    .btn-save-script {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 5px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--sage);
+      background: var(--sage);
+      color: var(--warm-white);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      flex: 1;
+    }
+
+    .btn-save-script:hover { background: #7d9172; }
+
+    .btn-discard-script {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 5px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border-subtle);
+      background: transparent;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-discard-script:hover {
+      border-color: var(--attention);
+      color: var(--attention);
+    }
+
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--stone); }
+  </style>
+</head>
+<body>
+
+  <aside class="sidebar-nav">
+    <div class="sidebar-logo">h</div>
+    <nav>
+      <a href="dashboard.html" class="nav-item" title="Overview">◈<span class="nav-tooltip">Overview</span></a>
+      <a href="content.html" class="nav-item" title="Content">◫<span class="nav-tooltip">Content</span></a>
+      <a href="funnel.html" class="nav-item active" title="Funnel">▽<span class="nav-tooltip">Funnel</span></a>
+      <a href="performance.html" class="nav-item" title="Performance">◉<span class="nav-tooltip">Performance</span></a>
+      <a href="clients.html" class="nav-item" title="Clients">♡<span class="nav-tooltip">Clients</span></a>
+      <a href="research.html" class="nav-item" title="Research">✦<span class="nav-tooltip">Research</span></a>
+    </nav>
+  </aside>
+
+  <div class="main-wrapper">
+    <main class="main-content">
+
+      <div class="page-header fade-up" style="animation-delay: 0s;">
+        <h1><em>her, becoming</em> — Funnel Pipeline</h1>
+        <p>Drag content through stages &middot; Track your full conversion funnel</p>
+      </div>
+
+      <!-- ── Kanban Board ── -->
+      <div class="section-title fade-up" style="animation-delay: 0.1s;">Content Pipeline</div>
+      <div class="kanban-board fade-up" style="animation-delay: 0.15s;">
+
+        <div class="kanban-column" data-stage="ideas">
+          <div class="kanban-column-header">
+            <span class="kanban-column-title">Ideas</span>
+            <span class="kanban-count">4</span>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="1">
+            <div class="kanban-card-title">Morning routine: non-toxic swaps</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🌿 Non-Toxic</span><span class="kanban-type">Carousel</span></div>
+            <div class="kanban-card-actions">
+              <button class="btn-script" onclick="generateScript(this, 1)">✦ Write Script</button>
+            </div>
+            <div class="script-panel" data-card-id="1">
+              <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
+              <div class="script-save-row">
+                <button class="btn-save-script" onclick="saveScript(1)">Save &amp; Move to Scripting</button>
+                <button class="btn-discard-script" onclick="discardScript(1)">Discard</button>
+              </div>
+            </div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="2">
+            <div class="kanban-card-title">Clean pantry essentials list</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🍃 Nutrition</span><span class="kanban-type">Carousel</span></div>
+            <div class="kanban-card-actions">
+              <button class="btn-script" onclick="generateScript(this, 2)">✦ Write Script</button>
+            </div>
+            <div class="script-panel" data-card-id="2">
+              <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
+              <div class="script-save-row">
+                <button class="btn-save-script" onclick="saveScript(2)">Save &amp; Move to Scripting</button>
+                <button class="btn-discard-script" onclick="discardScript(2)">Discard</button>
+              </div>
+            </div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="3">
+            <div class="kanban-card-title">Gut health reset: day in my life</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🍃 Nutrition</span><span class="kanban-type">Reel</span></div>
+            <div class="kanban-card-actions">
+              <button class="btn-script" onclick="generateScript(this, 3)">✦ Write Script</button>
+            </div>
+            <div class="script-panel" data-card-id="3">
+              <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
+              <div class="script-save-row">
+                <button class="btn-save-script" onclick="saveScript(3)">Save &amp; Move to Scripting</button>
+                <button class="btn-discard-script" onclick="discardScript(3)">Discard</button>
+              </div>
+            </div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="4">
+            <div class="kanban-card-title">Why I stopped using fragrance</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🌿 Non-Toxic</span><span class="kanban-type">Reel</span></div>
+            <div class="kanban-card-actions">
+              <button class="btn-script" onclick="generateScript(this, 4)">✦ Write Script</button>
+            </div>
+            <div class="script-panel" data-card-id="4">
+              <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
+              <div class="script-save-row">
+                <button class="btn-save-script" onclick="saveScript(4)">Save &amp; Move to Scripting</button>
+                <button class="btn-discard-script" onclick="discardScript(4)">Discard</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="kanban-column" data-stage="scripting">
+          <div class="kanban-column-header">
+            <span class="kanban-column-title">Scripting</span>
+            <span class="kanban-count">2</span>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="5">
+            <div class="kanban-card-title">Cotton vs polyester: what touches your skin matters</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🌿 Non-Toxic</span><span class="kanban-type">Carousel</span></div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="6">
+            <div class="kanban-card-title">3 signs your body is asking for change</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">✨ Spiritual</span><span class="kanban-type">Reel</span></div>
+          </div>
+        </div>
+
+        <div class="kanban-column" data-stage="editing">
+          <div class="kanban-column-header">
+            <span class="kanban-column-title">Editing</span>
+            <span class="kanban-count">2</span>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="7">
+            <div class="kanban-card-title">her, choosing — Farmers market haul</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🍃 Nutrition</span><span class="kanban-type">Reel</span></div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="8">
+            <div class="kanban-card-title">Ingredient label red flags</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🌿 Non-Toxic</span><span class="kanban-type">Carousel</span></div>
+          </div>
+        </div>
+
+        <div class="kanban-column" data-stage="scheduled">
+          <div class="kanban-column-header">
+            <span class="kanban-column-title">Scheduled</span>
+            <span class="kanban-count">3</span>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="9">
+            <div class="kanban-card-title">her, choosing — Spring water reel</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🕊️ Lifestyle</span><span class="kanban-type">Reel</span></div>
+            <div class="kanban-card-date">Mar 15 · 11:30 AM</div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="10">
+            <div class="kanban-card-title">5 Simple Swaps free guide promo</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🌿 Non-Toxic</span><span class="kanban-type">Carousel</span></div>
+            <div class="kanban-card-date">Mar 17 · 12:00 PM</div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="11">
+            <div class="kanban-card-title">Client spotlight: Grace's story</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">✨ Spiritual</span><span class="kanban-type">Reel</span></div>
+            <div class="kanban-card-date">Mar 18 · 10:00 AM</div>
+          </div>
+        </div>
+
+        <div class="kanban-column" data-stage="published">
+          <div class="kanban-column-header">
+            <span class="kanban-column-title">Published</span>
+            <span class="kanban-count">5</span>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="12">
+            <div class="kanban-card-title">5 ingredients to avoid in skincare</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🌿 Non-Toxic</span><span class="kanban-type">Carousel</span></div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="13">
+            <div class="kanban-card-title">her, choosing — Linen sheets</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🕊️ Lifestyle</span><span class="kanban-type">Reel</span></div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="14">
+            <div class="kanban-card-title">What is the Head to Toe Method?</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">✨ Spiritual</span><span class="kanban-type">Carousel</span></div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="15">
+            <div class="kanban-card-title">Organic cotton tee reel</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🕊️ Lifestyle</span><span class="kanban-type">Reel</span></div>
+          </div>
+          <div class="kanban-card" draggable="true" data-id="16">
+            <div class="kanban-card-title">Why gut health is the starting line</div>
+            <div class="kanban-card-meta"><span class="kanban-pillar">🍃 Nutrition</span><span class="kanban-type">Carousel</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Funnel Visualization ── -->
+      <div class="section-title fade-up" style="animation-delay: 0.25s;">Conversion Funnel</div>
+      <div class="funnel-viz fade-up" style="animation-delay: 0.3s;">
+        <div class="funnel-stages">
+          <div class="funnel-stage">
+            <div class="funnel-bar-wrapper">
+              <div class="funnel-bar stage-ig" id="bar-ig" style="height: 0%;"></div>
+              <span class="funnel-arrow">→</span>
+            </div>
+          </div>
+          <div class="funnel-stage">
+            <div class="funnel-bar-wrapper">
+              <div class="funnel-bar stage-guide" id="bar-guide" style="height: 0%;"></div>
+              <span class="funnel-arrow">→</span>
+            </div>
+          </div>
+          <div class="funnel-stage">
+            <div class="funnel-bar-wrapper">
+              <div class="funnel-bar stage-book" id="bar-book" style="height: 0%;"></div>
+              <span class="funnel-arrow">→</span>
+            </div>
+          </div>
+          <div class="funnel-stage">
+            <div class="funnel-bar-wrapper">
+              <div class="funnel-bar stage-coaching" id="bar-coaching" style="height: 0%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="funnel-labels">
+          <div class="funnel-label">
+            <div class="funnel-label-name">@makeitchrystelclear</div>
+            <div class="funnel-label-count">15</div>
+            <div class="funnel-label-desc">Followers</div>
+          </div>
+          <div class="funnel-label">
+            <div class="funnel-label-name">5 Simple Swaps</div>
+            <div class="funnel-label-count">—</div>
+            <div class="funnel-label-desc">Downloads</div>
+          </div>
+          <div class="funnel-label">
+            <div class="funnel-label-name">Head to Toe Book</div>
+            <div class="funnel-label-count">—</div>
+            <div class="funnel-label-desc">Purchases</div>
+          </div>
+          <div class="funnel-label">
+            <div class="funnel-label-name">1-1 Coaching</div>
+            <div class="funnel-label-count">2</div>
+            <div class="funnel-label-desc">Completed</div>
+          </div>
+        </div>
+
+        <div class="funnel-conversion-row">
+          <div class="funnel-conversion">
+            <div class="funnel-conversion-value">—</div>
+            <div class="funnel-conversion-label">IG → Guide</div>
+          </div>
+          <div class="funnel-conversion">
+            <div class="funnel-conversion-value">—</div>
+            <div class="funnel-conversion-label">Guide → Book</div>
+          </div>
+          <div class="funnel-conversion">
+            <div class="funnel-conversion-value">—</div>
+            <div class="funnel-conversion-label">Book → Coaching</div>
+          </div>
+          <div class="funnel-conversion">
+            <div class="funnel-conversion-value">—</div>
+            <div class="funnel-conversion-label">Overall IG → Coaching</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Revenue Breakdown ── -->
+      <div class="section-title fade-up" style="animation-delay: 0.4s;">Revenue Breakdown</div>
+      <div class="revenue-grid fade-up" style="animation-delay: 0.45s;">
+        <div class="revenue-card">
+          <div class="revenue-card-label">Total Revenue</div>
+          <div class="revenue-card-value">$994</div>
+          <div class="revenue-card-sub">All-time &middot; Coaching only</div>
+          <div class="revenue-card-trend" style="color: var(--text-secondary);">2 founding clients at $497</div>
+        </div>
+        <div class="revenue-card">
+          <div class="revenue-card-label">5 Simple Swaps</div>
+          <div class="revenue-card-value">Free</div>
+          <div class="revenue-card-sub">Lead magnet &middot; Not yet launched</div>
+          <div class="revenue-card-trend" style="color: var(--text-secondary);">— downloads</div>
+        </div>
+        <div class="revenue-card">
+          <div class="revenue-card-label">Head to Toe Book</div>
+          <div class="revenue-card-value">—</div>
+          <div class="revenue-card-sub">Digital book &middot; Not yet launched</div>
+          <div class="revenue-card-trend" style="color: var(--text-secondary);">— purchases</div>
+        </div>
+        <div class="revenue-card">
+          <div class="revenue-card-label">1-1 Coaching</div>
+          <div class="revenue-card-value">$994</div>
+          <div class="revenue-card-sub">2 clients (2 founding at $497)</div>
+          <div class="revenue-card-trend" style="color: var(--text-secondary);">12 sessions delivered</div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ═══ Schedule Modal ═══ -->
+  <div class="modal-overlay" id="scheduleModal">
+    <div class="modal">
+      <h3>Schedule Content</h3>
+      <p id="modalPostName">Set a date and time to publish this post.</p>
+      <div class="modal-field">
+        <label>Date</label>
+        <input type="date" id="scheduleDate" value="2026-03-17">
+      </div>
+      <div class="modal-field">
+        <label>Time</label>
+        <input type="time" id="scheduleTime" value="11:30">
+      </div>
+      <div class="modal-field">
+        <label>Platform</label>
+        <select id="schedulePlatform">
+          <option>Instagram — @makeitchrystelclear</option>
+          <option>TikTok — @makeitchrystelclear</option>
+          <option>YouTube — @chrystelclear</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="modalCancel">Cancel</button>
+        <button class="btn btn-primary" id="modalConfirm">Schedule</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ══════════════════════════════════════
+    // ── Board State Persistence ──
+    // ══════════════════════════════════════
+
+    function serializeBoard() {
+      const board = {};
+      document.querySelectorAll('.kanban-column').forEach(col => {
+        const stage = col.dataset.stage;
+        board[stage] = [];
+        col.querySelectorAll('.kanban-card').forEach(card => {
+          const data = {
+            id: card.dataset.id,
+            title: card.querySelector('.kanban-card-title').textContent,
+            pillar: card.querySelector('.kanban-pillar').textContent,
+            type: card.querySelector('.kanban-type').textContent,
+          };
+          const dateEl = card.querySelector('.kanban-card-date');
+          if (dateEl) data.date = dateEl.textContent;
+          board[stage].push(data);
+        });
+      });
+      return board;
+    }
+
+    function saveBoardState() {
+      localStorage.setItem('hb_pipeline_board', JSON.stringify(serializeBoard()));
+      updateCounts();
+    }
+
+    function createCardElement(data, inIdeas) {
+      const card = document.createElement('div');
+      card.className = 'kanban-card';
+      card.draggable = true;
+      card.dataset.id = data.id;
+
+      let html = `<div class="kanban-card-title">${data.title}</div>`;
+      html += `<div class="kanban-card-meta"><span class="kanban-pillar">${data.pillar}</span><span class="kanban-type">${data.type}</span></div>`;
+      card.innerHTML = html;
+
+      if (data.date) {
+        const dateEl = document.createElement('div');
+        dateEl.className = 'kanban-card-date';
+        dateEl.textContent = data.date;
+        card.appendChild(dateEl);
+      }
+
+      if (inIdeas) {
+        const actions = document.createElement('div');
+        actions.className = 'kanban-card-actions';
+        actions.innerHTML = `<button class="btn-script" onclick="generateScript(this, '${data.id}')">✦ Write Script</button>`;
+        card.appendChild(actions);
+
+        const panel = document.createElement('div');
+        panel.className = 'script-panel';
+        panel.dataset.cardId = data.id;
+        panel.innerHTML = `
+          <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
+          <div class="script-save-row">
+            <button class="btn-save-script" onclick="saveScript('${data.id}')">Save &amp; Move to Scripting</button>
+            <button class="btn-discard-script" onclick="discardScript('${data.id}')">Discard</button>
+          </div>`;
+        card.appendChild(panel);
+
+        const saved = localStorage.getItem('hb_script_' + data.id);
+        if (saved) {
+          panel.querySelector('.script-textarea').value = saved;
+          panel.classList.add('visible');
+          actions.querySelector('.btn-script').textContent = '✦ Rewrite Script';
+        }
+      }
+
+      attachDragEvents(card);
+      return card;
+    }
+
+    function attachDragEvents(card) {
+      card.addEventListener('dragstart', e => {
+        draggedCard = card;
+        sourceColumn = card.closest('.kanban-column');
+        card.classList.add('dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+      card.addEventListener('dragend', () => {
+        card.classList.remove('dragging');
+        document.querySelectorAll('.kanban-column').forEach(col => col.classList.remove('drag-over'));
+        draggedCard = null;
+        sourceColumn = null;
+      });
+    }
+
+    function restoreBoardState() {
+      const saved = localStorage.getItem('hb_pipeline_board');
+      if (!saved) return false;
+      try {
+        const board = JSON.parse(saved);
+        document.querySelectorAll('.kanban-card').forEach(c => c.remove());
+        Object.entries(board).forEach(([stage, cards]) => {
+          const col = document.querySelector(`.kanban-column[data-stage="${stage}"]`);
+          if (!col) return;
+          cards.forEach(data => {
+            const card = createCardElement(data, stage === 'ideas');
+            col.appendChild(card);
+          });
+        });
+        updateCounts();
+        return true;
+      } catch (e) {
+        console.error('Failed to restore board:', e);
+        return false;
+      }
+    }
+
+    function ingestPipelineIdeas() {
+      const raw = localStorage.getItem('hb_pipeline_ideas');
+      if (!raw) return;
+      try {
+        const ideas = JSON.parse(raw);
+        if (!Array.isArray(ideas) || ideas.length === 0) return;
+        const col = document.querySelector('.kanban-column[data-stage="ideas"]');
+        let maxId = 0;
+        document.querySelectorAll('.kanban-card').forEach(c => {
+          const id = parseInt(c.dataset.id);
+          if (id > maxId) maxId = id;
+        });
+        ideas.forEach(idea => {
+          maxId++;
+          const data = {
+            id: maxId.toString(),
+            title: idea.title,
+            pillar: idea.pillar || '✦ General',
+            type: idea.type || 'Reel',
+          };
+          const card = createCardElement(data, true);
+          col.appendChild(card);
+        });
+        localStorage.removeItem('hb_pipeline_ideas');
+        updateCounts();
+        saveBoardState();
+      } catch (e) {
+        console.error('Failed to ingest ideas:', e);
+      }
+    }
+
+    // ══════════════════════════════════════
+    // ── Drag & Drop ──
+    // ══════════════════════════════════════
+
+    let draggedCard = null;
+    let sourceColumn = null;
+
+    function initDragDrop() {
+      // Attach to initial cards (if board was NOT restored from localStorage)
+      document.querySelectorAll('.kanban-card').forEach(card => attachDragEvents(card));
+
+      document.querySelectorAll('.kanban-column').forEach(col => {
+        col.addEventListener('dragover', e => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          col.classList.add('drag-over');
+        });
+
+        col.addEventListener('dragleave', () => {
+          col.classList.remove('drag-over');
+        });
+
+        col.addEventListener('drop', e => {
+          e.preventDefault();
+          col.classList.remove('drag-over');
+          if (!draggedCard) return;
+
+          const targetStage = col.dataset.stage;
+          const fromIdeas = sourceColumn && sourceColumn.dataset.stage === 'ideas';
+
+          // Moving OUT of ideas — remove script UI
+          if (fromIdeas && targetStage !== 'ideas') {
+            const actions = draggedCard.querySelector('.kanban-card-actions');
+            if (actions) actions.remove();
+            const panel = draggedCard.querySelector('.script-panel');
+            if (panel) panel.remove();
+          }
+
+          // Moving INTO ideas — add script UI if not present
+          if (targetStage === 'ideas' && !draggedCard.querySelector('.kanban-card-actions')) {
+            const cid = draggedCard.dataset.id;
+            const actions = document.createElement('div');
+            actions.className = 'kanban-card-actions';
+            actions.innerHTML = `<button class="btn-script" onclick="generateScript(this, '${cid}')">✦ Write Script</button>`;
+            draggedCard.appendChild(actions);
+            const panel = document.createElement('div');
+            panel.className = 'script-panel';
+            panel.dataset.cardId = cid;
+            panel.innerHTML = `
+              <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
+              <div class="script-save-row">
+                <button class="btn-save-script" onclick="saveScript('${cid}')">Save &amp; Move to Scripting</button>
+                <button class="btn-discard-script" onclick="discardScript('${cid}')">Discard</button>
+              </div>`;
+            draggedCard.appendChild(panel);
+          }
+
+          if (targetStage === 'scheduled' && sourceColumn && sourceColumn.dataset.stage !== 'scheduled') {
+            const title = draggedCard.querySelector('.kanban-card-title').textContent;
+            document.getElementById('modalPostName').textContent = `Schedule "${title}" for publishing.`;
+            document.getElementById('scheduleModal').classList.add('show');
+
+            document.getElementById('modalConfirm').onclick = () => {
+              const date = document.getElementById('scheduleDate').value;
+              const time = document.getElementById('scheduleTime').value;
+              const dateObj = new Date(date + 'T' + time);
+              const formatted = dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) +
+                ' · ' + dateObj.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+              let dateEl = draggedCard.querySelector('.kanban-card-date');
+              if (!dateEl) {
+                dateEl = document.createElement('div');
+                dateEl.className = 'kanban-card-date';
+                draggedCard.appendChild(dateEl);
+              }
+              dateEl.textContent = formatted;
+              col.appendChild(draggedCard);
+              saveBoardState();
+              document.getElementById('scheduleModal').classList.remove('show');
+            };
+
+            document.getElementById('modalCancel').onclick = () => {
+              document.getElementById('scheduleModal').classList.remove('show');
+            };
+          } else {
+            if (targetStage !== 'scheduled') {
+              const dateEl = draggedCard.querySelector('.kanban-card-date');
+              if (dateEl) dateEl.remove();
+            }
+            col.appendChild(draggedCard);
+            saveBoardState();
+          }
+        });
+      });
+    }
+
+    function updateCounts() {
+      document.querySelectorAll('.kanban-column').forEach(col => {
+        const count = col.querySelectorAll('.kanban-card').length;
+        col.querySelector('.kanban-count').textContent = count;
+      });
+    }
+
+    // ── Close modal on overlay click ──
+    document.getElementById('scheduleModal').addEventListener('click', e => {
+      if (e.target === e.currentTarget) {
+        e.currentTarget.classList.remove('show');
+      }
+    });
+
+    // ══════════════════════════════════════
+    // ── Script Generation ──
+    // ══════════════════════════════════════
+
+    const SCRIPT_SYSTEM_PROMPT = 'You are a content strategist for Chrystel Clear, a wellness coaching brand. Write Instagram and TikTok content scripts that are warm, aspirational, and educational. The brand focuses on the Head to Toe Method: mind, body, systems, image, and self-care. Include hook, body, and CTA sections. Keep captions under 200 words. Include relevant hashtags.';
+
+    async function generateScript(btn, cardId) {
+      const card = btn.closest('.kanban-card');
+      const title = card.querySelector('.kanban-card-title').textContent;
+      const pillar = card.querySelector('.kanban-pillar').textContent;
+      const type = card.querySelector('.kanban-type').textContent;
+
+      btn.textContent = 'WRITING SCRIPT...';
+      btn.classList.add('generating');
+
+      const prompt = `Write a ${type} script for the following content idea:\n\nTitle: ${title}\nPillar: ${pillar}\nFormat: ${type}\n\nMake it ready for Instagram and TikTok. Include a strong hook, engaging body, and clear CTA.`;
+
+      try {
+        const resp = await fetch('/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, system: SCRIPT_SYSTEM_PROMPT }),
+        });
+        const data = await resp.json();
+        if (data.error) {
+          btn.textContent = '✦ Write Script';
+          btn.classList.remove('generating');
+          alert('Script generation failed: ' + data.error);
+          return;
+        }
+        const panel = card.querySelector('.script-panel');
+        panel.querySelector('.script-textarea').value = data.script;
+        panel.classList.add('visible');
+        btn.textContent = '✦ Rewrite Script';
+        btn.classList.remove('generating');
+      } catch (err) {
+        btn.textContent = '✦ Write Script';
+        btn.classList.remove('generating');
+        alert('Could not reach the proxy server. Make sure proxy.js is running on localhost:3001.');
+      }
+    }
+
+    function saveScript(cardId) {
+      const card = document.querySelector(`.kanban-card[data-id="${cardId}"]`);
+      const panel = card.querySelector('.script-panel');
+      const script = panel.querySelector('.script-textarea').value;
+      localStorage.setItem('hb_script_' + cardId, script);
+
+      const scriptingCol = document.querySelector('.kanban-column[data-stage="scripting"]');
+      scriptingCol.appendChild(card);
+
+      const actions = card.querySelector('.kanban-card-actions');
+      if (actions) actions.remove();
+      panel.remove();
+
+      saveBoardState();
+    }
+
+    function discardScript(cardId) {
+      const card = document.querySelector(`.kanban-card[data-id="${cardId}"]`);
+      const panel = card.querySelector('.script-panel');
+      panel.querySelector('.script-textarea').value = '';
+      panel.classList.remove('visible');
+      localStorage.removeItem('hb_script_' + cardId);
+      const btn = card.querySelector('.btn-script');
+      if (btn) btn.textContent = '✦ Write Script';
+    }
+
+    // ══════════════════════════════════════
+    // ── Init ──
+    // ══════════════════════════════════════
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Restore board or init from HTML
+      const restored = restoreBoardState();
+      if (!restored) {
+        // Attach drag events to existing HTML cards
+        document.querySelectorAll('.kanban-card').forEach(card => attachDragEvents(card));
+        // Serialize the initial HTML state
+        saveBoardState();
+      }
+
+      // Ingest any ideas from performance/research pages
+      ingestPipelineIdeas();
+
+      // Init column drop zones
+      initDragDrop();
+
+      // Animate funnel bars
+      setTimeout(() => {
+        document.getElementById('bar-ig').style.height = '100%';
+        document.getElementById('bar-guide').style.height = '8%';
+        document.getElementById('bar-book').style.height = '8%';
+        document.getElementById('bar-coaching').style.height = '30%';
+      }, 500);
+    });
+  </script>
+</body>
+</html>
