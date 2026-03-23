@@ -109,9 +109,10 @@ app.get('/dashboard/clients', requireAuth, (req, res) => {
   res.sendFile(path.join(__dirname, 'dashboard', 'clients.html'));
 });
 app.get('/dashboard/research', requireAuth, (req, res) => {
-app.get("/dashboard/analytics", requireAuth, (req, res) => {
-  res.sendFile(path.join(__dirname, "dashboard", "analytics.html"));
-});  res.sendFile(path.join(__dirname, 'dashboard', 'research.html'));
+  res.sendFile(path.join(__dirname, 'dashboard', 'research.html'));
+});
+app.get('/dashboard/analytics', requireAuth, (req, res) => {
+  res.sendFile(path.join(__dirname, 'dashboard', 'analytics.html'));
 });
 
 // Serve dashboard static assets (CSS, JS, images) behind auth
