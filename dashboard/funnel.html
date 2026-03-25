@@ -607,6 +607,103 @@
       color: var(--attention);
     }
 
+    /* ── Pipeline Controls ── */
+    .pipeline-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .pipeline-actions {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .filter-select {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 8px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-card);
+      color: var(--text-primary);
+      cursor: pointer;
+      outline: none;
+      transition: all 0.3s ease;
+    }
+
+    .filter-select:hover, .filter-select:focus {
+      border-color: var(--sage);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--sage);
+      color: var(--warm-white);
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 8px 32px rgba(61,46,31,0.15);
+      z-index: 600;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .kanban-card-date.today-highlight {
+      color: var(--terracotta);
+      font-weight: 600;
+    }
+
+    .modal-field textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      color: var(--text-primary);
+      background: var(--warm-white);
+      outline: none;
+      resize: vertical;
+      min-height: 60px;
+      transition: border-color 0.2s ease;
+    }
+
+    .modal-field textarea:focus {
+      border-color: var(--sage);
+    }
+
+    .post-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border-subtle);
+      font-size: 13px;
+    }
+
+    .post-detail-row span:first-child {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+
+    .post-detail-row span:last-child {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
     ::-webkit-scrollbar { width: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 10px; }
@@ -637,6 +734,19 @@
 
       <!-- ── Kanban Board ── -->
       <div class="section-title fade-up" style="animation-delay: 0.1s;">Content Pipeline</div>
+      <div class="pipeline-controls fade-up" style="animation-delay: 0.12s;">
+        <div class="pipeline-actions">
+          <button class="btn btn-primary" id="btnNewPost">+ New Post</button>
+          <select class="filter-select" id="pillarFilter">
+            <option value="all">Filter by Pillars</option>
+            <option value="Non-Toxic">🌿 Non-Toxic</option>
+            <option value="Nutrition">🍃 Nutrition</option>
+            <option value="Spiritual">✨ Spiritual</option>
+            <option value="Lifestyle">🕊️ Lifestyle</option>
+          </select>
+        </div>
+        <button class="btn btn-primary" id="btnScheduleAll">Schedule All</button>
+      </div>
       <div class="kanban-board fade-up" style="animation-delay: 0.15s;">
 
         <div class="kanban-column" data-stage="ideas">
@@ -914,6 +1024,58 @@
     </div>
   </div>
 
+  <!-- ═══ New Post Modal ═══ -->
+  <div class="modal-overlay" id="newPostModal">
+    <div class="modal">
+      <h3>Create New Post</h3>
+      <p>Add a new content idea to the pipeline.</p>
+      <div class="modal-field">
+        <label>Title</label>
+        <input type="text" id="newPostTitle" placeholder="e.g., Morning routine swaps">
+      </div>
+      <div class="modal-field">
+        <label>Pillar</label>
+        <select id="newPostPillar">
+          <option value="🌿 Non-Toxic">🌿 Non-Toxic</option>
+          <option value="🍃 Nutrition">🍃 Nutrition</option>
+          <option value="✨ Spiritual">✨ Spiritual</option>
+          <option value="🕊️ Lifestyle">🕊️ Lifestyle</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Type</label>
+        <select id="newPostTypeSelect">
+          <option>Reel</option>
+          <option>Carousel</option>
+          <option>Story</option>
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="newPostCancel">Cancel</button>
+        <button class="btn btn-primary" id="newPostSave">Add to Ideas</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Post Detail Modal ═══ -->
+  <div class="modal-overlay" id="postDetailModal">
+    <div class="modal">
+      <h3 id="postDetailTitle">Post Title</h3>
+      <div style="margin-bottom: 16px;">
+        <div class="post-detail-row"><span>Pillar</span><span id="postDetailPillar"></span></div>
+        <div class="post-detail-row"><span>Type</span><span id="postDetailType"></span></div>
+        <div class="post-detail-row"><span>Stage</span><span id="postDetailStage"></span></div>
+        <div class="post-detail-row" id="postDetailDateRow" style="display:none;"><span>Scheduled</span><span id="postDetailDate"></span></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="postDetailClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Toast ═══ -->
+  <div class="toast" id="toast"></div>
+
   <script>
     // ══════════════════════════════════════
     // ── Board State Persistence ──
@@ -1160,12 +1322,6 @@
       });
     }
 
-    // ── Close modal on overlay click ──
-    document.getElementById('scheduleModal').addEventListener('click', e => {
-      if (e.target === e.currentTarget) {
-        e.currentTarget.classList.remove('show');
-      }
-    });
 
     // ══════════════════════════════════════
     // ── Script Generation ──
@@ -1175,6 +1331,13 @@
 
     async function generateScript(btn, cardId) {
       const card = btn.closest('.kanban-card');
+      const panel = card.querySelector('.script-panel');
+      const textarea = panel.querySelector('.script-textarea');
+
+      // Show panel immediately so user can type manually
+      panel.classList.add('visible');
+      textarea.focus();
+
       const title = card.querySelector('.kanban-card-title').textContent;
       const pillar = card.querySelector('.kanban-pillar').textContent;
       const type = card.querySelector('.kanban-type').textContent;
@@ -1192,20 +1355,18 @@
         });
         const data = await resp.json();
         if (data.error) {
-          btn.textContent = '✦ Write Script';
+          btn.textContent = '\u2726 Write Script';
           btn.classList.remove('generating');
-          alert('Script generation failed: ' + data.error);
+          textarea.placeholder = 'AI unavailable \u2014 type your script here...';
           return;
         }
-        const panel = card.querySelector('.script-panel');
-        panel.querySelector('.script-textarea').value = data.script;
-        panel.classList.add('visible');
-        btn.textContent = '✦ Rewrite Script';
+        textarea.value = data.script;
+        btn.textContent = '\u2726 Rewrite Script';
         btn.classList.remove('generating');
       } catch (err) {
-        btn.textContent = '✦ Write Script';
+        btn.textContent = '\u2726 Write Script';
         btn.classList.remove('generating');
-        alert('Could not reach the proxy server. Make sure proxy.js is running on localhost:3001.');
+        textarea.placeholder = 'AI unavailable \u2014 type your script here...';
       }
     }
 
@@ -1236,6 +1397,45 @@
     }
 
     // ══════════════════════════════════════
+    // ── Toast ──
+    // ══════════════════════════════════════
+
+    function showToast(msg) {
+      var t = document.getElementById('toast');
+      t.textContent = msg;
+      t.classList.add('show');
+      setTimeout(function() { t.classList.remove('show'); }, 2500);
+    }
+
+    // ══════════════════════════════════════
+    // ── Post Detail ──
+    // ══════════════════════════════════════
+
+    function showPostDetail(card) {
+      var title = card.querySelector('.kanban-card-title').textContent;
+      var pillar = card.querySelector('.kanban-pillar').textContent;
+      var type = card.querySelector('.kanban-type').textContent;
+      var col = card.closest('.kanban-column');
+      var stage = col ? col.dataset.stage : 'unknown';
+      var dateEl = card.querySelector('.kanban-card-date');
+
+      document.getElementById('postDetailTitle').textContent = title;
+      document.getElementById('postDetailPillar').textContent = pillar;
+      document.getElementById('postDetailType').textContent = type;
+      document.getElementById('postDetailStage').textContent = stage.charAt(0).toUpperCase() + stage.slice(1);
+
+      var dateRow = document.getElementById('postDetailDateRow');
+      if (dateEl) {
+        dateRow.style.display = '';
+        document.getElementById('postDetailDate').textContent = dateEl.textContent;
+      } else {
+        dateRow.style.display = 'none';
+      }
+
+      document.getElementById('postDetailModal').classList.add('show');
+    }
+
+    // ══════════════════════════════════════
     // ── Init ──
     // ══════════════════════════════════════
 
@@ -1243,16 +1443,11 @@
       // Restore board or init from HTML
       const restored = restoreBoardState();
       if (!restored) {
-        // Attach drag events to existing HTML cards
         document.querySelectorAll('.kanban-card').forEach(card => attachDragEvents(card));
-        // Serialize the initial HTML state
         saveBoardState();
       }
 
-      // Ingest any ideas from performance/research pages
       ingestPipelineIdeas();
-
-      // Init column drop zones
       initDragDrop();
 
       // Animate funnel bars
@@ -1262,6 +1457,121 @@
         document.getElementById('bar-book').style.height = '8%';
         document.getElementById('bar-coaching').style.height = '30%';
       }, 500);
+
+      // ── New Post button ──
+      document.getElementById('btnNewPost').addEventListener('click', function() {
+        document.getElementById('newPostModal').classList.add('show');
+      });
+
+      document.getElementById('newPostCancel').addEventListener('click', function() {
+        document.getElementById('newPostModal').classList.remove('show');
+      });
+
+      document.getElementById('newPostSave').addEventListener('click', function() {
+        var title = document.getElementById('newPostTitle').value.trim();
+        var pillar = document.getElementById('newPostPillar').value;
+        var type = document.getElementById('newPostTypeSelect').value;
+
+        if (!title) { showToast('Please enter a title'); return; }
+
+        var maxId = 0;
+        document.querySelectorAll('.kanban-card').forEach(function(c) {
+          var id = parseInt(c.dataset.id);
+          if (id > maxId) maxId = id;
+        });
+
+        var data = {
+          id: (maxId + 1).toString(),
+          title: title,
+          pillar: pillar,
+          type: type
+        };
+
+        var ideasCol = document.querySelector('.kanban-column[data-stage="ideas"]');
+        var card = createCardElement(data, true);
+        ideasCol.appendChild(card);
+        updateCounts();
+        saveBoardState();
+
+        document.getElementById('newPostTitle').value = '';
+        document.getElementById('newPostModal').classList.remove('show');
+        showToast('Added "' + title + '" to Ideas');
+      });
+
+      // ── Filter by Pillars ──
+      document.getElementById('pillarFilter').addEventListener('change', function() {
+        var val = this.value;
+        document.querySelectorAll('.kanban-card').forEach(function(card) {
+          var pillar = card.querySelector('.kanban-pillar');
+          if (!pillar) return;
+          if (val === 'all' || pillar.textContent.indexOf(val) !== -1) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+
+      // ── Schedule All ──
+      document.getElementById('btnScheduleAll').addEventListener('click', function() {
+        var editingCol = document.querySelector('.kanban-column[data-stage="editing"]');
+        var scheduledCol = document.querySelector('.kanban-column[data-stage="scheduled"]');
+        var editingCards = editingCol.querySelectorAll('.kanban-card');
+
+        if (editingCards.length === 0) {
+          showToast('No posts in Editing to schedule');
+          return;
+        }
+
+        var count = editingCards.length;
+        editingCards.forEach(function(card) {
+          var dateEl = card.querySelector('.kanban-card-date');
+          if (!dateEl) {
+            dateEl = document.createElement('div');
+            dateEl.className = 'kanban-card-date';
+            var d = new Date();
+            d.setDate(d.getDate() + Math.floor(Math.random() * 7) + 1);
+            dateEl.textContent = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' \u00B7 11:30 AM';
+            card.appendChild(dateEl);
+          }
+          scheduledCol.appendChild(card);
+        });
+
+        updateCounts();
+        saveBoardState();
+        showToast(count + ' post' + (count > 1 ? 's' : '') + ' moved to Scheduled');
+      });
+
+      // ── Kanban card click for detail (event delegation) ──
+      document.querySelector('.kanban-board').addEventListener('click', function(e) {
+        if (e.target.closest('.btn-script') || e.target.closest('.btn-save-script') ||
+            e.target.closest('.btn-discard-script') || e.target.closest('.script-textarea')) return;
+        var card = e.target.closest('.kanban-card');
+        if (!card) return;
+        showPostDetail(card);
+      });
+
+      // ── Post Detail modal close ──
+      document.getElementById('postDetailClose').addEventListener('click', function() {
+        document.getElementById('postDetailModal').classList.remove('show');
+      });
+
+      // ── Close modals on overlay click ──
+      ['scheduleModal', 'newPostModal', 'postDetailModal'].forEach(function(id) {
+        document.getElementById(id).addEventListener('click', function(e) {
+          if (e.target === e.currentTarget) e.currentTarget.classList.remove('show');
+        });
+      });
+
+      // ── Highlight today's scheduled posts ──
+      var today = new Date();
+      var todayStr = today.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+      document.querySelectorAll('.kanban-card-date').forEach(function(dateEl) {
+        if (dateEl.textContent.indexOf(todayStr) !== -1) {
+          dateEl.classList.add('today-highlight');
+          dateEl.textContent = dateEl.textContent + ' (Today)';
+        }
+      });
     });
   </script>
 </body>

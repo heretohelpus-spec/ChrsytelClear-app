@@ -622,6 +622,97 @@
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: var(--sand); border-radius: 10px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--stone); }
+
+    /* ── Modal ── */
+    .modal-overlay {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(61,46,31,0.3);
+      backdrop-filter: blur(4px);
+      z-index: 500;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 32px;
+      width: 480px; max-width: 90%; max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(61,46,31,0.15);
+    }
+    .modal h3 {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: 22px; font-weight: 500;
+      color: var(--text-primary); margin-bottom: 8px;
+    }
+    .modal p {
+      font-size: 13px; color: var(--text-secondary); margin-bottom: 20px;
+    }
+    .modal-field { margin-bottom: 16px; }
+    .modal-field label {
+      display: block; font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-secondary); margin-bottom: 6px;
+    }
+    .modal-field input, .modal-field select, .modal-field textarea {
+      width: 100%; padding: 10px 14px;
+      border: 1px solid var(--border-subtle); border-radius: 12px;
+      font-family: 'DM Sans', sans-serif; font-size: 13px;
+      color: var(--text-primary); background: var(--warm-white);
+      outline: none; transition: border-color 0.2s ease;
+    }
+    .modal-field input:focus, .modal-field select:focus, .modal-field textarea:focus {
+      border-color: var(--sage);
+    }
+    .modal-field textarea { resize: vertical; min-height: 60px; }
+    .modal-actions {
+      display: flex; gap: 10px; justify-content: flex-end; margin-top: 24px;
+    }
+    .calendar-day { cursor: pointer; }
+    .day-post-item {
+      background: rgba(245,240,235,0.7);
+      border-left: 3px solid var(--sage);
+      border-radius: 8px; padding: 10px 12px; margin-bottom: 8px;
+      cursor: pointer; transition: background 0.2s ease;
+    }
+    .day-post-item:hover { background: rgba(232,221,211,0.6); }
+    .day-post-item .post-item-title {
+      font-size: 13px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;
+    }
+    .day-post-item .post-item-meta {
+      font-size: 11px; color: var(--text-secondary);
+    }
+    .day-post-item.status-draft { border-left-color: var(--gold); }
+    .day-post-item.status-idea { border-left-color: var(--stone); }
+    .filter-dropdown { position: relative; display: inline-block; }
+    .filter-menu {
+      display: none; position: absolute; top: 100%; right: 0;
+      margin-top: 6px; background: var(--bg-card);
+      border: 1px solid var(--border-subtle); border-radius: 12px;
+      padding: 6px 0; min-width: 180px;
+      box-shadow: 0 8px 32px rgba(61,46,31,0.12); z-index: 50;
+    }
+    .filter-menu.show { display: block; }
+    .filter-menu-item {
+      display: block; width: 100%; padding: 8px 16px;
+      font-family: 'DM Sans', sans-serif; font-size: 12px;
+      color: var(--text-primary); background: none; border: none;
+      text-align: left; cursor: pointer; transition: background 0.2s ease;
+    }
+    .filter-menu-item:hover { background: rgba(139,158,126,0.08); }
+    .filter-menu-item.active { color: var(--sage); font-weight: 600; }
+    .toast {
+      position: fixed; bottom: 24px; right: 24px;
+      background: var(--sage); color: var(--warm-white);
+      padding: 12px 20px; border-radius: 12px;
+      font-size: 13px; font-weight: 500;
+      box-shadow: 0 8px 32px rgba(61,46,31,0.15);
+      z-index: 600; opacity: 0; transform: translateY(10px);
+      transition: all 0.3s ease; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 <body>
@@ -674,8 +765,17 @@
           <button class="calendar-nav-btn" id="nextWeek">›</button>
         </div>
         <div class="calendar-actions">
-          <button class="btn">Filter by pillar</button>
-          <button class="btn btn-primary">+ New Post</button>
+          <div class="filter-dropdown">
+            <button class="btn" id="btnFilterPillar">Filter by pillar</button>
+            <div class="filter-menu" id="filterMenu">
+              <button class="filter-menu-item active" data-pillar="all">All Pillars</button>
+              <button class="filter-menu-item" data-pillar="Non-Toxic">🌿 Non-Toxic Living</button>
+              <button class="filter-menu-item" data-pillar="Nutrition">🍃 Nutrition</button>
+              <button class="filter-menu-item" data-pillar="Spiritual">✨ Spiritual Alignment</button>
+              <button class="filter-menu-item" data-pillar="Lifestyle">🕊️ Lifestyle</button>
+            </div>
+          </div>
+          <button class="btn btn-primary" id="btnNewPost">+ New Post</button>
         </div>
       </div>
 
@@ -868,7 +968,7 @@
             <div style="font-size: 13px; font-weight: 600; color: var(--text-primary);">Next Week's Batch — Mar 16–22</div>
             <div style="font-size: 11.5px; color: var(--text-secondary); margin-top: 2px;">3 of 4 slots filled</div>
           </div>
-          <button class="btn btn-primary">Schedule All</button>
+          <button class="btn btn-primary" id="btnScheduleAll">Schedule All</button>
         </div>
         <div class="batch-slots">
           <div class="batch-slot filled">
@@ -932,6 +1032,281 @@
 
     </main>
   </div>
+
+  <!-- ═══ Add Content Modal ═══ -->
+  <div class="modal-overlay" id="addContentModal">
+    <div class="modal">
+      <h3>Add Content</h3>
+      <p>Schedule a new post to your content calendar.</p>
+      <div class="modal-field">
+        <label>Title</label>
+        <input type="text" id="newPostTitle" placeholder="e.g., Morning routine swaps">
+      </div>
+      <div class="modal-field">
+        <label>Content Type</label>
+        <select id="newPostType">
+          <option>Reel</option>
+          <option>Carousel</option>
+          <option>Story</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Pillar</label>
+        <select id="newPostPillar">
+          <option>Non-Toxic</option>
+          <option>Nutrition</option>
+          <option>Spiritual</option>
+          <option>Lifestyle</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Status</label>
+        <select id="newPostStatus">
+          <option value="idea">Idea</option>
+          <option value="draft">Draft</option>
+          <option value="scheduled" selected>Scheduled</option>
+        </select>
+      </div>
+      <div class="modal-field">
+        <label>Date</label>
+        <input type="date" id="newPostDate" value="2026-03-25">
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="addContentCancel">Cancel</button>
+        <button class="btn btn-primary" id="addContentSave">Add to Calendar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Day Detail Modal ═══ -->
+  <div class="modal-overlay" id="dayDetailModal">
+    <div class="modal">
+      <h3 id="dayDetailTitle">March 15, 2026</h3>
+      <p>Scheduled content for this day</p>
+      <div id="dayDetailContent"></div>
+      <div class="modal-actions">
+        <button class="btn" id="dayDetailClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Post Detail Modal ═══ -->
+  <div class="modal-overlay" id="postDetailModal">
+    <div class="modal">
+      <h3 id="postDetailTitle">Post Title</h3>
+      <p id="postDetailMeta">Reel</p>
+      <div style="margin-bottom: 16px;">
+        <span class="badge badge-scheduled" id="postDetailStatus">
+          <span class="badge-dot"></span> Scheduled
+        </span>
+      </div>
+      <div class="modal-actions">
+        <button class="btn" id="postDetailClose">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ Toast ═══ -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var addContentModal = document.getElementById('addContentModal');
+    var dayDetailModal = document.getElementById('dayDetailModal');
+    var postDetailModal = document.getElementById('postDetailModal');
+    var toast = document.getElementById('toast');
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(function() { toast.classList.remove('show'); }, 2500);
+    }
+
+    // ── "+ New Post" button ──
+    document.getElementById('btnNewPost').addEventListener('click', function() {
+      addContentModal.classList.add('show');
+    });
+
+    // ── Add Content form ──
+    document.getElementById('addContentCancel').addEventListener('click', function() {
+      addContentModal.classList.remove('show');
+    });
+
+    document.getElementById('addContentSave').addEventListener('click', function() {
+      var title = document.getElementById('newPostTitle').value.trim();
+      var type = document.getElementById('newPostType').value;
+      var pillar = document.getElementById('newPostPillar').value;
+      var status = document.getElementById('newPostStatus').value;
+      var date = document.getElementById('newPostDate').value;
+
+      if (!title) { showToast('Please enter a title'); return; }
+      if (!date) { showToast('Please select a date'); return; }
+
+      var dateObj = new Date(date + 'T00:00:00');
+      var dayNum = dateObj.getDate();
+      var month = dateObj.getMonth();
+
+      var dayCells = document.querySelectorAll('.calendar-day:not(.other-month)');
+      var targetCell = null;
+      dayCells.forEach(function(cell) {
+        var cellDate = cell.querySelector('.calendar-date');
+        if (cellDate && parseInt(cellDate.textContent) === dayNum && month === 2) {
+          targetCell = cell;
+        }
+      });
+
+      if (!targetCell) {
+        showToast('Date is outside the visible calendar range');
+        addContentModal.classList.remove('show');
+        return;
+      }
+
+      var pillarEmojis = { 'Non-Toxic': '\u{1F33F}', 'Nutrition': '\u{1F343}', 'Spiritual': '\u2728', 'Lifestyle': '\u{1F54A}\uFE0F' };
+      var post = document.createElement('div');
+      post.className = 'calendar-post status-' + status;
+      post.innerHTML = '<div class="calendar-post-title">' + title + '</div>' +
+        '<div class="calendar-post-meta">' + type + ' \u00B7 ' + (pillarEmojis[pillar] || '') + ' ' + pillar + '</div>';
+
+      post.addEventListener('click', function(e) {
+        e.stopPropagation();
+        showPostDetail(title, type + ' \u00B7 ' + (pillarEmojis[pillar] || '') + ' ' + pillar, status);
+      });
+
+      targetCell.appendChild(post);
+      document.getElementById('newPostTitle').value = '';
+      addContentModal.classList.remove('show');
+      showToast('Content added to ' + dateObj.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+    });
+
+    // ── Close modals on overlay click ──
+    [addContentModal, dayDetailModal, postDetailModal].forEach(function(modal) {
+      modal.addEventListener('click', function(e) {
+        if (e.target === e.currentTarget) e.currentTarget.classList.remove('show');
+      });
+    });
+
+    // ── Post detail helper ──
+    function showPostDetail(title, meta, status) {
+      var statusLabels = { 'draft': 'Draft', 'idea': 'Idea', 'scheduled': 'Scheduled' };
+      document.getElementById('postDetailTitle').textContent = title;
+      document.getElementById('postDetailMeta').textContent = meta;
+      var badge = document.getElementById('postDetailStatus');
+      var label = statusLabels[status] || status;
+      badge.className = 'badge badge-' + (status || 'scheduled');
+      badge.innerHTML = '<span class="badge-dot"></span> ' + (label.charAt(0).toUpperCase() + label.slice(1));
+      postDetailModal.classList.add('show');
+    }
+
+    // ── Calendar day clicks ──
+    document.querySelectorAll('.calendar-day').forEach(function(dayCell) {
+      dayCell.addEventListener('click', function(e) {
+        if (e.target.closest('.calendar-post')) return;
+        var dateEl = dayCell.querySelector('.calendar-date');
+        if (!dateEl) return;
+        var dateNum = dateEl.textContent;
+        var isOtherMonth = dayCell.classList.contains('other-month');
+        var posts = dayCell.querySelectorAll('.calendar-post');
+
+        document.getElementById('dayDetailTitle').textContent =
+          (isOtherMonth ? 'April ' : 'March ') + dateNum + ', 2026';
+        var content = document.getElementById('dayDetailContent');
+        content.innerHTML = '';
+
+        if (posts.length === 0) {
+          content.innerHTML = '<p style="color:var(--text-secondary);font-size:13px;text-align:center;padding:20px 0;">No content scheduled for this day</p>';
+        } else {
+          posts.forEach(function(post) {
+            var t = post.querySelector('.calendar-post-title').textContent;
+            var m = post.querySelector('.calendar-post-meta').textContent;
+            var sc = post.classList.contains('status-draft') ? 'status-draft' :
+                     post.classList.contains('status-idea') ? 'status-idea' : '';
+            var status = post.classList.contains('status-draft') ? 'draft' :
+                         post.classList.contains('status-idea') ? 'idea' : 'scheduled';
+            var item = document.createElement('div');
+            item.className = 'day-post-item ' + sc;
+            item.innerHTML = '<div class="post-item-title">' + t + '</div><div class="post-item-meta">' + m + '</div>';
+            item.addEventListener('click', function() {
+              dayDetailModal.classList.remove('show');
+              showPostDetail(t, m, status);
+            });
+            content.appendChild(item);
+          });
+        }
+        dayDetailModal.classList.add('show');
+      });
+    });
+
+    // ── Calendar post clicks ──
+    document.querySelectorAll('.calendar-post').forEach(function(post) {
+      post.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var title = post.querySelector('.calendar-post-title').textContent;
+        var meta = post.querySelector('.calendar-post-meta').textContent;
+        var status = post.classList.contains('status-draft') ? 'draft' :
+                     post.classList.contains('status-idea') ? 'idea' : 'scheduled';
+        showPostDetail(title, meta, status);
+      });
+    });
+
+    // ── Modal close buttons ──
+    document.getElementById('dayDetailClose').addEventListener('click', function() {
+      dayDetailModal.classList.remove('show');
+    });
+    document.getElementById('postDetailClose').addEventListener('click', function() {
+      postDetailModal.classList.remove('show');
+    });
+
+    // ── Filter by Pillar ──
+    var filterBtn = document.getElementById('btnFilterPillar');
+    var filterMenu = document.getElementById('filterMenu');
+
+    filterBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      filterMenu.classList.toggle('show');
+    });
+
+    document.addEventListener('click', function() {
+      filterMenu.classList.remove('show');
+    });
+
+    document.querySelectorAll('.filter-menu-item').forEach(function(item) {
+      item.addEventListener('click', function(e) {
+        e.stopPropagation();
+        var pillar = this.dataset.pillar;
+        document.querySelectorAll('.filter-menu-item').forEach(function(i) { i.classList.remove('active'); });
+        this.classList.add('active');
+        filterMenu.classList.remove('show');
+
+        document.querySelectorAll('.calendar-post').forEach(function(post) {
+          var meta = post.querySelector('.calendar-post-meta').textContent;
+          post.style.display = (pillar === 'all' || meta.indexOf(pillar) !== -1) ? '' : 'none';
+        });
+
+        filterBtn.textContent = pillar === 'all' ? 'Filter by pillar' : this.textContent;
+      });
+    });
+
+    // ── Calendar Nav ──
+    document.getElementById('prevWeek').addEventListener('click', function() {
+      showToast('Viewing March 2026');
+    });
+    document.getElementById('nextWeek').addEventListener('click', function() {
+      showToast('Viewing March 2026');
+    });
+
+    // ── Schedule All ──
+    document.getElementById('btnScheduleAll').addEventListener('click', function() {
+      showToast('All batch content scheduled successfully');
+    });
+
+    // ── Empty batch slot click ──
+    document.querySelectorAll('.batch-slot:not(.filled)').forEach(function(slot) {
+      slot.addEventListener('click', function() {
+        addContentModal.classList.add('show');
+      });
+    });
+  });
+  </script>
 
 </body>
 </html>
