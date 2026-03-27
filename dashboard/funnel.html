@@ -633,38 +633,9 @@
       display: inline-block;
     }
 
-    .btn-canva.creating {
-      border-color: var(--gold);
-      color: var(--gold);
-      pointer-events: none;
-      animation: pulse 1.5s ease-in-out infinite;
-    }
-
-    .canva-status {
-      display: none;
-      align-items: center;
-      gap: 6px;
-      margin-top: 6px;
-      font-size: 11px;
-      color: var(--terracotta);
-      font-weight: 500;
-    }
-
-    .canva-status.visible {
-      display: flex;
-    }
-
-    .canva-status .canva-spinner {
-      width: 14px;
-      height: 14px;
-      border: 2px solid var(--border-subtle);
-      border-top-color: var(--terracotta);
-      border-radius: 50%;
-      animation: canvaSpin 0.8s linear infinite;
-    }
-
-    @keyframes canvaSpin {
-      to { transform: rotate(360deg); }
+    .btn-canva.copied {
+      border-color: var(--sage);
+      color: var(--sage);
     }
 
     /* ── Pipeline Controls ── */
@@ -824,7 +795,7 @@
               <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
               <div class="script-save-row">
                 <button class="btn-save-script" onclick="saveScript(1)">Save &amp; Move to Scripting</button>
-                <button class="btn-canva" onclick="createInCanva(1)">◎ Create in Canva</button>
+                <button class="btn-canva" onclick="createInCanva(1)">◎ Copy Script & Open Canva</button>
                 <button class="btn-discard-script" onclick="discardScript(1)">Discard</button>
               </div>
             </div>
@@ -839,7 +810,7 @@
               <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
               <div class="script-save-row">
                 <button class="btn-save-script" onclick="saveScript(2)">Save &amp; Move to Scripting</button>
-                <button class="btn-canva" onclick="createInCanva(2)">◎ Create in Canva</button>
+                <button class="btn-canva" onclick="createInCanva(2)">◎ Copy Script & Open Canva</button>
                 <button class="btn-discard-script" onclick="discardScript(2)">Discard</button>
               </div>
             </div>
@@ -854,7 +825,7 @@
               <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
               <div class="script-save-row">
                 <button class="btn-save-script" onclick="saveScript(3)">Save &amp; Move to Scripting</button>
-                <button class="btn-canva" onclick="createInCanva(3)">◎ Create in Canva</button>
+                <button class="btn-canva" onclick="createInCanva(3)">◎ Copy Script & Open Canva</button>
                 <button class="btn-discard-script" onclick="discardScript(3)">Discard</button>
               </div>
             </div>
@@ -869,7 +840,7 @@
               <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
               <div class="script-save-row">
                 <button class="btn-save-script" onclick="saveScript(4)">Save &amp; Move to Scripting</button>
-                <button class="btn-canva" onclick="createInCanva(4)">◎ Create in Canva</button>
+                <button class="btn-canva" onclick="createInCanva(4)">◎ Copy Script & Open Canva</button>
                 <button class="btn-discard-script" onclick="discardScript(4)">Discard</button>
               </div>
             </div>
@@ -885,14 +856,14 @@
             <div class="kanban-card-title">Cotton vs polyester: what touches your skin matters</div>
             <div class="kanban-card-meta"><span class="kanban-pillar">🌿 Non-Toxic</span><span class="kanban-type">Carousel</span></div>
             <div class="kanban-card-actions">
-              <button class="btn-canva visible" onclick="createInCanva(5)">◎ Create in Canva</button>
+              <button class="btn-canva visible" onclick="createInCanva(5)">◎ Copy Script & Open Canva</button>
             </div>
           </div>
           <div class="kanban-card" draggable="true" data-id="6">
             <div class="kanban-card-title">3 signs your body is asking for change</div>
             <div class="kanban-card-meta"><span class="kanban-pillar">✨ Spiritual</span><span class="kanban-type">Reel</span></div>
             <div class="kanban-card-actions">
-              <button class="btn-canva visible" onclick="createInCanva(6)">◎ Create in Canva</button>
+              <button class="btn-canva visible" onclick="createInCanva(6)">◎ Copy Script & Open Canva</button>
             </div>
           </div>
         </div>
@@ -1206,7 +1177,7 @@
           <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
           <div class="script-save-row">
             <button class="btn-save-script" onclick="saveScript('${data.id}')">Save &amp; Move to Scripting</button>
-            <button class="btn-canva" onclick="createInCanva('${data.id}')">◎ Create in Canva</button>
+            <button class="btn-canva" onclick="createInCanva('${data.id}')">◎ Copy Script & Open Canva</button>
             <button class="btn-discard-script" onclick="discardScript('${data.id}')">Discard</button>
           </div>`;
         card.appendChild(panel);
@@ -1225,7 +1196,7 @@
       if (!inIdeas && (stage === 'scripting' || stage === 'editing')) {
         const canvaActions = document.createElement('div');
         canvaActions.className = 'kanban-card-actions';
-        canvaActions.innerHTML = `<button class="btn-canva visible" onclick="createInCanva('${data.id}')">◎ Create in Canva</button>`;
+        canvaActions.innerHTML = `<button class="btn-canva visible" onclick="createInCanva('${data.id}')">◎ Copy Script & Open Canva</button>`;
         card.appendChild(canvaActions);
       }
 
@@ -1468,7 +1439,7 @@
       // Add Canva button for scripting stage
       const canvaActions = document.createElement('div');
       canvaActions.className = 'kanban-card-actions';
-      canvaActions.innerHTML = `<button class="btn-canva visible" onclick="createInCanva('${cardId}')">◎ Create in Canva</button>`;
+      canvaActions.innerHTML = `<button class="btn-canva visible" onclick="createInCanva('${cardId}')">◎ Copy Script & Open Canva</button>`;
       card.appendChild(canvaActions);
 
       saveBoardState();
@@ -1487,63 +1458,38 @@
     }
 
     // ══════════════════════════════════════
-    // ── Canva Design Creation ──
+    // ── Canva — Copy Script & Open ──
     // ══════════════════════════════════════
 
-    async function createInCanva(cardId) {
+    function createInCanva(cardId) {
       const card = document.querySelector(`.kanban-card[data-id="${cardId}"]`);
       if (!card) return;
 
       const title = card.querySelector('.kanban-card-title').textContent;
-      const pillar = card.querySelector('.kanban-pillar').textContent;
 
       // Get script from textarea or localStorage
       const textarea = card.querySelector('.script-textarea');
       let script = textarea ? textarea.value : '';
       if (!script) script = localStorage.getItem('hb_script_' + cardId) || title;
 
-      // Show status indicator
-      let status = card.querySelector('.canva-status');
-      if (!status) {
-        status = document.createElement('div');
-        status.className = 'canva-status';
-        status.innerHTML = '<div class="canva-spinner"></div><span>Creating design in Canva...</span>';
-        card.appendChild(status);
-      }
-      status.querySelector('span').textContent = 'Creating design in Canva...';
-      status.classList.add('visible');
-
-      // Update button state
-      const btn = card.querySelector('.btn-canva');
-      const origText = btn ? btn.textContent : '';
-      if (btn) {
-        btn.classList.add('creating');
-        btn.textContent = 'Creating...';
-      }
-
-      try {
-        const resp = await fetch('/api/create-canva-post', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ script, pillar, title }),
-        });
-        const data = await resp.json();
-
-        if (data.error) {
-          showToast('Canva: ' + data.error);
-        } else if (data.url) {
-          window.open(data.url, '_blank');
-          showToast(data.method === 'api' ? 'Design created in Canva' : 'Canva opened — create your design');
-        }
-      } catch (err) {
-        showToast('Could not connect to Canva');
-      } finally {
-        status.classList.remove('visible');
+      // Copy script to clipboard
+      navigator.clipboard.writeText(script).then(() => {
+        const btn = card.querySelector('.btn-canva');
         if (btn) {
-          btn.classList.remove('creating');
-          btn.textContent = origText || '◎ Create in Canva';
+          btn.classList.add('copied');
+          btn.textContent = '✓ Script copied!';
+          setTimeout(() => {
+            btn.classList.remove('copied');
+            btn.textContent = '◎ Copy Script & Open Canva';
+          }, 2000);
         }
-      }
+        showToast('Script copied — paste it into your Canva design');
+      }).catch(() => {
+        showToast('Could not copy to clipboard');
+      });
+
+      // Open Canva Instagram post creator
+      window.open('https://www.canva.com/create/instagram-posts/', '_blank');
     }
 
     // ══════════════════════════════════════
@@ -1696,7 +1642,7 @@
       document.querySelector('.kanban-board').addEventListener('click', function(e) {
         if (e.target.closest('.btn-script') || e.target.closest('.btn-save-script') ||
             e.target.closest('.btn-discard-script') || e.target.closest('.script-textarea') ||
-            e.target.closest('.btn-canva') || e.target.closest('.canva-status')) return;
+            e.target.closest('.btn-canva')) return;
         var card = e.target.closest('.kanban-card');
         if (!card) return;
         showPostDetail(card);
