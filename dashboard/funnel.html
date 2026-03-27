@@ -1336,22 +1336,20 @@
 
       // Show panel immediately so user can type manually
       panel.classList.add('visible');
-      textarea.focus();
 
       const title = card.querySelector('.kanban-card-title').textContent;
       const pillar = card.querySelector('.kanban-pillar').textContent;
       const type = card.querySelector('.kanban-type').textContent;
 
-      btn.textContent = 'WRITING SCRIPT...';
+      btn.textContent = 'Generating...';
       btn.classList.add('generating');
-
-      const prompt = `Write a ${type} script for the following content idea:\n\nTitle: ${title}\nPillar: ${pillar}\nFormat: ${type}\n\nMake it ready for Instagram and TikTok. Include a strong hook, engaging body, and clear CTA.`;
+      textarea.placeholder = 'Generating script with AI...';
 
       try {
-        const resp = await fetch('/generate', {
+        const resp = await fetch('/api/generate-script', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt, system: SCRIPT_SYSTEM_PROMPT }),
+          body: JSON.stringify({ idea: title, pillar: pillar, platform: 'Instagram' }),
         });
         const data = await resp.json();
         if (data.error) {
@@ -1361,6 +1359,7 @@
           return;
         }
         textarea.value = data.script;
+        textarea.focus();
         btn.textContent = '\u2726 Rewrite Script';
         btn.classList.remove('generating');
       } catch (err) {

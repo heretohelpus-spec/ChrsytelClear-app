@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const session = require('express-session');
 const path = require('path');
+const Anthropic = require('@anthropic-ai/sdk');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -118,7 +119,41 @@ app.get('/dashboard/analytics', requireAuth, (req, res) => {
 // Serve dashboard static assets (CSS, JS, images) behind auth
 app.use('/dashboard/assets', requireAuth, express.static(path.join(__dirname, 'dashboard', 'assets')));
 
-// === API ROUTES (for future use) ===
+// === API ROUTES ===
+
+// AI Script Generation
+app.post('/api/generate-script', requireAuth, async (req, res) => {
+  const { idea, pillar, platform } = req.body;
+
+  if (!idea) {
+    return res.status(400).json({ error: 'Missing required field: idea' });
+  }
+
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' });
+  }
+
+  try {
+    const client = new Anthropic({ apiKey });
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'user',
+          content: `Write an Instagram script for Crystel's 'her,becoming' program about: ${idea}. Content pillar: ${pillar || 'General'}. Platform: ${platform || 'Instagram'}. Keep it conversational, authentic, and under 150 words. Include a hook, main point, and CTA.`
+        }
+      ]
+    });
+
+    const script = message.content[0].text;
+    res.json({ script });
+  } catch (err) {
+    console.error('Anthropic API error:', err.message);
+    res.status(500).json({ error: 'Failed to generate script' });
+  }
+});
 
 // Health check (Railway uses this)
 app.get('/health', (req, res) => {
