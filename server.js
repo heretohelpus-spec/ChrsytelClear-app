@@ -209,7 +209,7 @@ app.post('/api/create-canva-design', requireAuth, async (req, res) => {
   }
 });
 
-// Canva AI-Powered Post Creation
+// Canva AI-Powered Post Creation via MCP
 app.post('/api/create-canva-post', requireAuth, async (req, res) => {
   const { script, pillar, title } = req.body;
 
@@ -222,96 +222,94 @@ app.post('/api/create-canva-post', requireAuth, async (req, res) => {
     return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' });
   }
 
-  // Build a descriptive query for Canva's AI design generation
   const pillarClean = (pillar || '').replace(/[^\w\s]/g, '').trim();
-  const designQuery = [
-    `Create an Instagram post for "her, becoming" wellness brand.`,
-    `Title: ${title || 'Wellness Post'}`,
-    pillarClean ? `Content pillar: ${pillarClean}` : '',
-    `Content: ${script || title}`,
-    `Style: warm, feminine, clean aesthetic with earthy tones. Brand colors: sage green, dusty rose, terracotta, gold.`,
-  ].filter(Boolean).join(' ');
 
   try {
     const client = new Anthropic({ apiKey });
 
-    // Use Claude with Canva MCP tool to generate the design
+    // Call Claude with Canva MCP server to generate the design directly
     const message = await client.messages.create({
       model: 'claude-sonnet-4-5-20250929',
-      max_tokens: 1024,
+      max_tokens: 4096,
+      mcp_servers: [
+        {
+          type: 'url',
+          url: 'https://mcp.canva.com/mcp',
+          name: 'canva-mcp',
+        }
+      ],
       messages: [
         {
           role: 'user',
-          content: `Generate a Canva Instagram post design with this query: ${designQuery}`
-        }
-      ],
-      tools: [
-        {
-          name: 'canva_generate_design',
-          description: 'Generate a design in Canva',
-          input_schema: {
-            type: 'object',
-            properties: {
-              query: { type: 'string', description: 'Design description' },
-              design_type: { type: 'string', enum: ['instagram_post'] },
-            },
-            required: ['query', 'design_type'],
-          },
+          content: `Use the generate-design tool to create an Instagram post design.
+
+Brand: "her, becoming" — a wellness coaching brand by Chrystel Clear
+Style: warm, feminine, clean aesthetic
+Colors: sage green (#B5C5A8), dusty rose (#D4A9A9), terracotta (#C4775B), warm gold (#C9A96E), deep brown (#3D2E1F)
+Mood: empowering, soulful, grounded
+
+Post title: ${title || 'Wellness Post'}
+${pillarClean ? `Content pillar: ${pillarClean}` : ''}
+Script/Content: ${script || title}
+
+Generate a beautiful, on-brand Instagram post design using these details.`
         }
       ],
     });
 
-    // Check if Claude wants to use the tool — extract the query it built
-    const toolUse = message.content.find(b => b.type === 'tool_use');
-    const finalQuery = toolUse ? toolUse.input.query : designQuery;
+    // Extract the Canva design URL from Claude's MCP tool response
+    let canvaUrl = null;
 
-    // Now call Canva Connect API to create the design
-    const canvaToken = process.env.CANVA_ACCESS_TOKEN;
-
-    if (!canvaToken) {
-      // Fallback: open Canva with a search-based template
-      const searchQuery = encodeURIComponent(finalQuery.substring(0, 100));
-      return res.json({
-        url: `https://www.canva.com/create/instagram-posts/`,
-        method: 'quickcreate',
-        note: 'Set CANVA_ACCESS_TOKEN in .env for full Canva API integration',
-      });
+    for (const block of message.content) {
+      if (block.type === 'text') {
+        const match = block.text.match(/https:\/\/[^\s"')]*canva\.com\/design\/[^\s"')]+/);
+        if (match) {
+          canvaUrl = match[0];
+          break;
+        }
+      }
+      if (block.type === 'mcp_tool_result') {
+        const resultText = typeof block.content === 'string'
+          ? block.content
+          : JSON.stringify(block.content);
+        const match = resultText.match(/https:\/\/[^\s"')]*canva\.com\/design\/[^\s"')]+/);
+        if (match) {
+          canvaUrl = match[0];
+          break;
+        }
+      }
     }
 
-    // Create design via Canva Connect API
-    const canvaResp = await fetch('https://api.canva.com/rest/v1/designs', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${canvaToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        design_type: { type: 'preset', name: 'instagramPost' },
-        title: `her, becoming — ${title || 'Post'}`,
-      }),
-    });
-
-    if (!canvaResp.ok) {
-      const errText = await canvaResp.text();
-      console.error('Canva API error:', canvaResp.status, errText);
-      return res.json({
-        url: `https://www.canva.com/create/instagram-posts/`,
-        method: 'quickcreate',
-      });
+    if (canvaUrl) {
+      return res.json({ url: canvaUrl });
     }
 
-    const canvaData = await canvaResp.json();
-    res.json({
-      url: canvaData.design.urls.edit_url,
-      designId: canvaData.design.id,
-      method: 'api',
+    // If no design URL pattern found, check for any canva.com URL
+    for (const block of message.content) {
+      const text = block.type === 'text' ? block.text
+        : block.type === 'mcp_tool_result' ? (typeof block.content === 'string' ? block.content : JSON.stringify(block.content))
+        : '';
+      const match = text.match(/https:\/\/[^\s"')]*canva\.com[^\s"')]+/);
+      if (match) {
+        canvaUrl = match[0];
+        break;
+      }
+    }
+
+    if (canvaUrl) {
+      return res.json({ url: canvaUrl });
+    }
+
+    console.error('No Canva URL in MCP response:', JSON.stringify(message.content, null, 2));
+    res.status(502).json({
+      error: 'Could not extract design URL from Canva MCP response',
+      fallbackUrl: 'https://www.canva.com/create/instagram-posts/',
     });
   } catch (err) {
-    console.error('Canva post creation error:', err.message);
-    // Final fallback
-    res.json({
-      url: `https://www.canva.com/create/instagram-posts/`,
-      method: 'quickcreate',
+    console.error('Canva MCP error:', err.message);
+    res.status(502).json({
+      error: 'Canva design creation failed',
+      fallbackUrl: 'https://www.canva.com/create/instagram-posts/',
     });
   }
 });
