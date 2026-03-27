@@ -1496,7 +1496,6 @@
 
       const title = card.querySelector('.kanban-card-title').textContent;
       const pillar = card.querySelector('.kanban-pillar').textContent;
-      const type = card.querySelector('.kanban-type').textContent;
 
       // Get script from textarea or localStorage
       const textarea = card.querySelector('.script-textarea');
@@ -1511,6 +1510,7 @@
         status.innerHTML = '<div class="canva-spinner"></div><span>Creating design in Canva...</span>';
         card.appendChild(status);
       }
+      status.querySelector('span').textContent = 'Creating design in Canva...';
       status.classList.add('visible');
 
       // Update button state
@@ -1522,18 +1522,18 @@
       }
 
       try {
-        const resp = await fetch('/api/create-canva-design', {
+        const resp = await fetch('/api/create-canva-post', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title, script, pillar, type }),
+          body: JSON.stringify({ script, pillar, title }),
         });
         const data = await resp.json();
 
-        if (data.url) {
-          window.open(data.url, '_blank');
-          showToast('Design opened in Canva');
-        } else if (data.error) {
+        if (data.error) {
           showToast('Canva: ' + data.error);
+        } else if (data.url) {
+          window.open(data.url, '_blank');
+          showToast(data.method === 'api' ? 'Design created in Canva' : 'Canva opened — create your design');
         }
       } catch (err) {
         showToast('Could not connect to Canva');

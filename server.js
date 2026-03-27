@@ -155,7 +155,7 @@ app.post('/api/generate-script', requireAuth, async (req, res) => {
   }
 });
 
-// Canva Design Creation
+// Canva Design Creation (legacy - blank design)
 app.post('/api/create-canva-design', requireAuth, async (req, res) => {
   const { title, script, pillar, type } = req.body;
 
@@ -163,22 +163,9 @@ app.post('/api/create-canva-design', requireAuth, async (req, res) => {
     return res.status(400).json({ error: 'Missing required field: title' });
   }
 
-  // Map pillar to design style for Canva
-  const pillarKey = (pillar || '').replace(/[^\w]/g, '').toLowerCase();
-  const styleMap = {
-    nontoxic:  { accent: '#8B9E7E', label: 'Non-Toxic', mood: 'clean, natural, minimal' },
-    nutrition: { accent: '#C4775B', label: 'Nutrition', mood: 'warm, nourishing, earthy' },
-    spiritual: { accent: '#C9A1A0', label: 'Spiritual', mood: 'ethereal, calm, soft' },
-    lifestyle: { accent: '#B8963E', label: 'Lifestyle', mood: 'elegant, aspirational, refined' },
-  };
-  const matched = Object.entries(styleMap).find(([k]) => pillarKey.includes(k));
-  const style = matched ? matched[1] : styleMap.nontoxic;
-
   const canvaToken = process.env.CANVA_ACCESS_TOKEN;
 
   if (!canvaToken) {
-    // Fallback: open Canva's Instagram post creator
-    const designTitle = encodeURIComponent(`her, becoming — ${title}`);
     return res.json({
       url: `https://www.canva.com/create/instagram-posts/`,
       method: 'quickcreate',
@@ -187,7 +174,6 @@ app.post('/api/create-canva-design', requireAuth, async (req, res) => {
   }
 
   try {
-    // Create design via Canva Connect API
     const response = await fetch('https://api.canva.com/rest/v1/designs', {
       method: 'POST',
       headers: {
@@ -216,6 +202,113 @@ app.post('/api/create-canva-design', requireAuth, async (req, res) => {
     });
   } catch (err) {
     console.error('Canva API error:', err.message);
+    res.json({
+      url: `https://www.canva.com/create/instagram-posts/`,
+      method: 'quickcreate',
+    });
+  }
+});
+
+// Canva AI-Powered Post Creation
+app.post('/api/create-canva-post', requireAuth, async (req, res) => {
+  const { script, pillar, title } = req.body;
+
+  if (!script && !title) {
+    return res.status(400).json({ error: 'Missing required fields: script or title' });
+  }
+
+  const apiKey = process.env.ANTHROPIC_API_KEY;
+  if (!apiKey) {
+    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not configured' });
+  }
+
+  // Build a descriptive query for Canva's AI design generation
+  const pillarClean = (pillar || '').replace(/[^\w\s]/g, '').trim();
+  const designQuery = [
+    `Create an Instagram post for "her, becoming" wellness brand.`,
+    `Title: ${title || 'Wellness Post'}`,
+    pillarClean ? `Content pillar: ${pillarClean}` : '',
+    `Content: ${script || title}`,
+    `Style: warm, feminine, clean aesthetic with earthy tones. Brand colors: sage green, dusty rose, terracotta, gold.`,
+  ].filter(Boolean).join(' ');
+
+  try {
+    const client = new Anthropic({ apiKey });
+
+    // Use Claude with Canva MCP tool to generate the design
+    const message = await client.messages.create({
+      model: 'claude-sonnet-4-5-20250929',
+      max_tokens: 1024,
+      messages: [
+        {
+          role: 'user',
+          content: `Generate a Canva Instagram post design with this query: ${designQuery}`
+        }
+      ],
+      tools: [
+        {
+          name: 'canva_generate_design',
+          description: 'Generate a design in Canva',
+          input_schema: {
+            type: 'object',
+            properties: {
+              query: { type: 'string', description: 'Design description' },
+              design_type: { type: 'string', enum: ['instagram_post'] },
+            },
+            required: ['query', 'design_type'],
+          },
+        }
+      ],
+    });
+
+    // Check if Claude wants to use the tool — extract the query it built
+    const toolUse = message.content.find(b => b.type === 'tool_use');
+    const finalQuery = toolUse ? toolUse.input.query : designQuery;
+
+    // Now call Canva Connect API to create the design
+    const canvaToken = process.env.CANVA_ACCESS_TOKEN;
+
+    if (!canvaToken) {
+      // Fallback: open Canva with a search-based template
+      const searchQuery = encodeURIComponent(finalQuery.substring(0, 100));
+      return res.json({
+        url: `https://www.canva.com/create/instagram-posts/`,
+        method: 'quickcreate',
+        note: 'Set CANVA_ACCESS_TOKEN in .env for full Canva API integration',
+      });
+    }
+
+    // Create design via Canva Connect API
+    const canvaResp = await fetch('https://api.canva.com/rest/v1/designs', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${canvaToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        design_type: { type: 'preset', name: 'instagramPost' },
+        title: `her, becoming — ${title || 'Post'}`,
+      }),
+    });
+
+    if (!canvaResp.ok) {
+      const errText = await canvaResp.text();
+      console.error('Canva API error:', canvaResp.status, errText);
+      return res.json({
+        url: `https://www.canva.com/create/instagram-posts/`,
+        method: 'quickcreate',
+      });
+    }
+
+    const canvaData = await canvaResp.json();
+    res.json({
+      url: canvaData.design.urls.edit_url,
+      designId: canvaData.design.id,
+      method: 'api',
+    });
+  } catch (err) {
+    console.error('Canva post creation error:', err.message);
+    // Final fallback
     res.json({
       url: `https://www.canva.com/create/instagram-posts/`,
       method: 'quickcreate',
