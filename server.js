@@ -155,6 +155,74 @@ app.post('/api/generate-script', requireAuth, async (req, res) => {
   }
 });
 
+// Canva Design Creation
+app.post('/api/create-canva-design', requireAuth, async (req, res) => {
+  const { title, script, pillar, type } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ error: 'Missing required field: title' });
+  }
+
+  // Map pillar to design style for Canva
+  const pillarKey = (pillar || '').replace(/[^\w]/g, '').toLowerCase();
+  const styleMap = {
+    nontoxic:  { accent: '#8B9E7E', label: 'Non-Toxic', mood: 'clean, natural, minimal' },
+    nutrition: { accent: '#C4775B', label: 'Nutrition', mood: 'warm, nourishing, earthy' },
+    spiritual: { accent: '#C9A1A0', label: 'Spiritual', mood: 'ethereal, calm, soft' },
+    lifestyle: { accent: '#B8963E', label: 'Lifestyle', mood: 'elegant, aspirational, refined' },
+  };
+  const matched = Object.entries(styleMap).find(([k]) => pillarKey.includes(k));
+  const style = matched ? matched[1] : styleMap.nontoxic;
+
+  const canvaToken = process.env.CANVA_ACCESS_TOKEN;
+
+  if (!canvaToken) {
+    // Fallback: open Canva's Instagram post creator
+    const designTitle = encodeURIComponent(`her, becoming — ${title}`);
+    return res.json({
+      url: `https://www.canva.com/create/instagram-posts/`,
+      method: 'quickcreate',
+      note: 'Set CANVA_ACCESS_TOKEN in .env for full API integration'
+    });
+  }
+
+  try {
+    // Create design via Canva Connect API
+    const response = await fetch('https://api.canva.com/rest/v1/designs', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${canvaToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        design_type: { type: 'preset', name: 'instagramPost' },
+        title: `her, becoming — ${title}`,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error('Canva API error:', response.status, await response.text());
+      return res.json({
+        url: `https://www.canva.com/create/instagram-posts/`,
+        method: 'quickcreate',
+      });
+    }
+
+    const data = await response.json();
+    res.json({
+      url: data.design.urls.edit_url,
+      designId: data.design.id,
+      method: 'api',
+    });
+  } catch (err) {
+    console.error('Canva API error:', err.message);
+    res.json({
+      url: `https://www.canva.com/create/instagram-posts/`,
+      method: 'quickcreate',
+    });
+  }
+});
+
 // Health check (Railway uses this)
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

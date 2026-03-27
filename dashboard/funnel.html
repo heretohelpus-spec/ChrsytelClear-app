@@ -607,6 +607,66 @@
       color: var(--attention);
     }
 
+    /* ── Canva Integration ── */
+    .btn-canva {
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 5px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--terracotta);
+      background: transparent;
+      color: var(--terracotta);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: none;
+    }
+
+    .btn-canva:hover {
+      background: var(--terracotta);
+      color: var(--warm-white);
+    }
+
+    .btn-canva.visible {
+      display: inline-block;
+    }
+
+    .btn-canva.creating {
+      border-color: var(--gold);
+      color: var(--gold);
+      pointer-events: none;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    .canva-status {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--terracotta);
+      font-weight: 500;
+    }
+
+    .canva-status.visible {
+      display: flex;
+    }
+
+    .canva-status .canva-spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--border-subtle);
+      border-top-color: var(--terracotta);
+      border-radius: 50%;
+      animation: canvaSpin 0.8s linear infinite;
+    }
+
+    @keyframes canvaSpin {
+      to { transform: rotate(360deg); }
+    }
+
     /* ── Pipeline Controls ── */
     .pipeline-controls {
       display: flex;
@@ -764,6 +824,7 @@
               <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
               <div class="script-save-row">
                 <button class="btn-save-script" onclick="saveScript(1)">Save &amp; Move to Scripting</button>
+                <button class="btn-canva" onclick="createInCanva(1)">◎ Create in Canva</button>
                 <button class="btn-discard-script" onclick="discardScript(1)">Discard</button>
               </div>
             </div>
@@ -778,6 +839,7 @@
               <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
               <div class="script-save-row">
                 <button class="btn-save-script" onclick="saveScript(2)">Save &amp; Move to Scripting</button>
+                <button class="btn-canva" onclick="createInCanva(2)">◎ Create in Canva</button>
                 <button class="btn-discard-script" onclick="discardScript(2)">Discard</button>
               </div>
             </div>
@@ -792,6 +854,7 @@
               <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
               <div class="script-save-row">
                 <button class="btn-save-script" onclick="saveScript(3)">Save &amp; Move to Scripting</button>
+                <button class="btn-canva" onclick="createInCanva(3)">◎ Create in Canva</button>
                 <button class="btn-discard-script" onclick="discardScript(3)">Discard</button>
               </div>
             </div>
@@ -806,6 +869,7 @@
               <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
               <div class="script-save-row">
                 <button class="btn-save-script" onclick="saveScript(4)">Save &amp; Move to Scripting</button>
+                <button class="btn-canva" onclick="createInCanva(4)">◎ Create in Canva</button>
                 <button class="btn-discard-script" onclick="discardScript(4)">Discard</button>
               </div>
             </div>
@@ -820,10 +884,16 @@
           <div class="kanban-card" draggable="true" data-id="5">
             <div class="kanban-card-title">Cotton vs polyester: what touches your skin matters</div>
             <div class="kanban-card-meta"><span class="kanban-pillar">🌿 Non-Toxic</span><span class="kanban-type">Carousel</span></div>
+            <div class="kanban-card-actions">
+              <button class="btn-canva visible" onclick="createInCanva(5)">◎ Create in Canva</button>
+            </div>
           </div>
           <div class="kanban-card" draggable="true" data-id="6">
             <div class="kanban-card-title">3 signs your body is asking for change</div>
             <div class="kanban-card-meta"><span class="kanban-pillar">✨ Spiritual</span><span class="kanban-type">Reel</span></div>
+            <div class="kanban-card-actions">
+              <button class="btn-canva visible" onclick="createInCanva(6)">◎ Create in Canva</button>
+            </div>
           </div>
         </div>
 
@@ -1106,7 +1176,7 @@
       updateCounts();
     }
 
-    function createCardElement(data, inIdeas) {
+    function createCardElement(data, inIdeas, stage) {
       const card = document.createElement('div');
       card.className = 'kanban-card';
       card.draggable = true;
@@ -1136,6 +1206,7 @@
           <textarea class="script-textarea" placeholder="Script will appear here..."></textarea>
           <div class="script-save-row">
             <button class="btn-save-script" onclick="saveScript('${data.id}')">Save &amp; Move to Scripting</button>
+            <button class="btn-canva" onclick="createInCanva('${data.id}')">◎ Create in Canva</button>
             <button class="btn-discard-script" onclick="discardScript('${data.id}')">Discard</button>
           </div>`;
         card.appendChild(panel);
@@ -1145,7 +1216,17 @@
           panel.querySelector('.script-textarea').value = saved;
           panel.classList.add('visible');
           actions.querySelector('.btn-script').textContent = '✦ Rewrite Script';
+          const canvaBtn = panel.querySelector('.btn-canva');
+          if (canvaBtn) canvaBtn.classList.add('visible');
         }
+      }
+
+      // Add Canva button for cards in scripting/editing stages
+      if (!inIdeas && (stage === 'scripting' || stage === 'editing')) {
+        const canvaActions = document.createElement('div');
+        canvaActions.className = 'kanban-card-actions';
+        canvaActions.innerHTML = `<button class="btn-canva visible" onclick="createInCanva('${data.id}')">◎ Create in Canva</button>`;
+        card.appendChild(canvaActions);
       }
 
       attachDragEvents(card);
@@ -1177,7 +1258,7 @@
           const col = document.querySelector(`.kanban-column[data-stage="${stage}"]`);
           if (!col) return;
           cards.forEach(data => {
-            const card = createCardElement(data, stage === 'ideas');
+            const card = createCardElement(data, stage === 'ideas', stage);
             col.appendChild(card);
           });
         });
@@ -1209,7 +1290,7 @@
             pillar: idea.pillar || '✦ General',
             type: idea.type || 'Reel',
           };
-          const card = createCardElement(data, true);
+          const card = createCardElement(data, true, 'ideas');
           col.appendChild(card);
         });
         localStorage.removeItem('hb_pipeline_ideas');
@@ -1362,6 +1443,8 @@
         textarea.focus();
         btn.textContent = '\u2726 Rewrite Script';
         btn.classList.remove('generating');
+        const canvaBtn = panel.querySelector('.btn-canva');
+        if (canvaBtn) canvaBtn.classList.add('visible');
       } catch (err) {
         btn.textContent = '\u2726 Write Script';
         btn.classList.remove('generating');
@@ -1382,6 +1465,12 @@
       if (actions) actions.remove();
       panel.remove();
 
+      // Add Canva button for scripting stage
+      const canvaActions = document.createElement('div');
+      canvaActions.className = 'kanban-card-actions';
+      canvaActions.innerHTML = `<button class="btn-canva visible" onclick="createInCanva('${cardId}')">◎ Create in Canva</button>`;
+      card.appendChild(canvaActions);
+
       saveBoardState();
     }
 
@@ -1393,6 +1482,68 @@
       localStorage.removeItem('hb_script_' + cardId);
       const btn = card.querySelector('.btn-script');
       if (btn) btn.textContent = '✦ Write Script';
+      const canvaBtn = panel.querySelector('.btn-canva');
+      if (canvaBtn) canvaBtn.classList.remove('visible');
+    }
+
+    // ══════════════════════════════════════
+    // ── Canva Design Creation ──
+    // ══════════════════════════════════════
+
+    async function createInCanva(cardId) {
+      const card = document.querySelector(`.kanban-card[data-id="${cardId}"]`);
+      if (!card) return;
+
+      const title = card.querySelector('.kanban-card-title').textContent;
+      const pillar = card.querySelector('.kanban-pillar').textContent;
+      const type = card.querySelector('.kanban-type').textContent;
+
+      // Get script from textarea or localStorage
+      const textarea = card.querySelector('.script-textarea');
+      let script = textarea ? textarea.value : '';
+      if (!script) script = localStorage.getItem('hb_script_' + cardId) || title;
+
+      // Show status indicator
+      let status = card.querySelector('.canva-status');
+      if (!status) {
+        status = document.createElement('div');
+        status.className = 'canva-status';
+        status.innerHTML = '<div class="canva-spinner"></div><span>Creating design in Canva...</span>';
+        card.appendChild(status);
+      }
+      status.classList.add('visible');
+
+      // Update button state
+      const btn = card.querySelector('.btn-canva');
+      const origText = btn ? btn.textContent : '';
+      if (btn) {
+        btn.classList.add('creating');
+        btn.textContent = 'Creating...';
+      }
+
+      try {
+        const resp = await fetch('/api/create-canva-design', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ title, script, pillar, type }),
+        });
+        const data = await resp.json();
+
+        if (data.url) {
+          window.open(data.url, '_blank');
+          showToast('Design opened in Canva');
+        } else if (data.error) {
+          showToast('Canva: ' + data.error);
+        }
+      } catch (err) {
+        showToast('Could not connect to Canva');
+      } finally {
+        status.classList.remove('visible');
+        if (btn) {
+          btn.classList.remove('creating');
+          btn.textContent = origText || '◎ Create in Canva';
+        }
+      }
     }
 
     // ══════════════════════════════════════
@@ -1487,7 +1638,7 @@
         };
 
         var ideasCol = document.querySelector('.kanban-column[data-stage="ideas"]');
-        var card = createCardElement(data, true);
+        var card = createCardElement(data, true, 'ideas');
         ideasCol.appendChild(card);
         updateCounts();
         saveBoardState();
@@ -1544,7 +1695,8 @@
       // ── Kanban card click for detail (event delegation) ──
       document.querySelector('.kanban-board').addEventListener('click', function(e) {
         if (e.target.closest('.btn-script') || e.target.closest('.btn-save-script') ||
-            e.target.closest('.btn-discard-script') || e.target.closest('.script-textarea')) return;
+            e.target.closest('.btn-discard-script') || e.target.closest('.script-textarea') ||
+            e.target.closest('.btn-canva') || e.target.closest('.canva-status')) return;
         var card = e.target.closest('.kanban-card');
         if (!card) return;
         showPostDetail(card);
